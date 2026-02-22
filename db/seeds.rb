@@ -8,4 +8,6 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+Brand.destroy_all
 require_relative "seed_folder/brand_seed"
+require_relative "seed_folder/car_model_seed"

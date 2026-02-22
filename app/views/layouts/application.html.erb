@@ -23,7 +23,8 @@
   </head>
 
   <body>
-    <main class="mx-auto flex">
+    <main class="mx-auto">
+      <%= render "shared/navbar" unless devise_controller? %>
       <%= yield %>
     </main>
   </body>

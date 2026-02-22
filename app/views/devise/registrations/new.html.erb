@@ -1,0 +1,191 @@
+<div class="min-h-screen flex bg-slate-100">
+
+  <!-- Left Branding -->
+  <div class="hidden lg:flex w-1/2 bg-gradient-to-br from-[#0A1F44] to-[#1E3A8A] text-white items-center">
+    <div class="px-16">
+      <%= image_tag "logo.png", alt: "Iron Cars Shop", style: "height: 120px; width: 320px; display: flex; justify-content: center; margin: auto  " %>
+      <h1 class="text-5xl font-bold leading-tight mb-6">
+        Join <span class="text-blue-400">Iron Cars Shop</span>
+      </h1>
+
+      <p class="text-lg text-slate-200 mb-8">
+        Buy and sell vehicles across the USA and Canada with confidence.
+      </p>
+
+      <ul class="space-y-4 text-slate-200">
+        <li class="flex items-center gap-3">
+          <span class="text-blue-400">✔</span> 1M+ Vehicles
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="text-blue-400">✔</span> Verified Dealers
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="text-blue-400">✔</span> Secure Transactions
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Right Form -->
+  <div class="flex w-full lg:w-1/2 items-center justify-center px-6 py-12">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-xl p-10">
+
+      <div class="mb-8 text-center">
+        <h2 class="text-3xl font-bold text-[#0A1F44]">Create Account</h2>
+        <p class="text-slate-500 mt-2 text-sm">
+          Start buying and selling today
+        </p>
+      </div>
+
+      <div
+        data-controller="signup"
+        data-signup-states-by-country-value="<%= @states_by_country.to_json %>"
+        class="space-y-6"
+      >
+
+      <%= form_for(resource,
+            as: resource_name,
+            url: registration_path(resource_name),
+            html: { class: "space-y-6" }) do |f| %>
+
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <!-- STEP INDICATOR -->
+        <div class="flex justify-center gap-2 mb-6">
+          <div data-signup-target="step1Indicator"
+              class="h-2 w-8 rounded-full bg-blue-600 transition-all"></div>
+          <div data-signup-target="step2Indicator"
+              class="h-2 w-8 rounded-full bg-slate-300 transition-all"></div>
+        </div>
+
+        <!-- STEP 1 -->
+        <div data-signup-target="step1" class="space-y-4">
+
+          <div>
+            <%= f.label :email, class: "block text-sm font-medium text-slate-700 mb-2" %>
+            <%= f.email_field :email, required: true, class: "input w-full rounded-lg border border-slate-300 px-4 py-3" %>
+          </div>
+
+          <div>
+            <%= f.label :password, class: "block text-sm font-medium text-slate-700 mb-2" %>
+            <%= f.password_field :password, required: true, class: "input w-full rounded-lg border border-slate-300 px-4 py-3" %>
+          </div>
+
+          <div>
+            <%= f.label :password_confirmation, class: "block text-sm font-medium text-slate-700 mb-2" %>
+            <%= f.password_field :password_confirmation, required: true, class: "input w-full rounded-lg border border-slate-300 px-4 py-3" %>
+          </div>
+
+          <button type="button"
+                  data-action="click->signup#next"
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition">
+            Continue
+          </button>
+
+        </div>
+
+        <!-- STEP 2 -->
+        <div data-signup-target="step2" class="space-y-4 hidden">
+
+          <div>
+            <%= f.label :full_name, class: "block text-sm font-medium text-slate-700 mb-2" %>
+            <%= f.text_field :full_name, class: "w-full rounded-lg border border-slate-300 px-4 py-3" %>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <%= f.label :document_id, class: "block text-sm font-medium text-slate-700 mb-2" %>
+              <%= f.text_field :document_id, class: "w-full rounded-lg border border-slate-300 px-4 py-3" %>
+            </div>
+
+            <div>
+              <%= f.label :phone_number, class: "block text-sm font-medium text-slate-700 mb-2" %>
+              <%= f.telephone_field :phone_number, class: "w-full rounded-lg border border-slate-300 px-4 py-3" %>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-4">
+            <div class="col-span-2">
+              <%= f.label :address_street, class: "block text-sm font-medium text-slate-700 mb-2" %>
+              <%= f.text_field :address_street, class: "w-full rounded-lg border border-slate-300 px-4 py-3" %>
+            </div>
+
+            <div>
+              <%= f.label :address_number, class: "block text-sm font-medium text-slate-700 mb-2" %>
+              <%= f.text_field :address_number, class: "w-full rounded-lg border border-slate-300 px-4 py-3" %>
+            </div>
+          </div>
+
+          <div>
+            <%= f.label :address_complement, class: "block text-sm font-medium text-slate-700 mb-2" %>
+            <%= f.text_field :address_complement, class: "w-full rounded-lg border border-slate-300 px-4 py-3" %>
+          </div>
+
+          <div>
+            <%= f.label :address_neighborhood, class: "block text-sm font-medium text-slate-700 mb-2" %>
+            <%= f.text_field :address_neighborhood, class: "w-full rounded-lg border border-slate-300 px-4 py-3" %>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <%= f.label :address_country, class: "block text-sm font-medium text-slate-700 mb-2" %>
+              <%= f.select :address_country,
+                    options_for_select(@country_options, f.object.address_country),
+                    { include_blank: "Select country" },
+                    {
+                      class: "w-full rounded-lg border border-slate-300 px-4 py-3",
+                      data: {
+                        action: "change->signup#countryChanged",
+                        signup_target: "country"
+                      }
+                    } %>
+            </div>
+
+            <div>
+              <%= f.label :address_state, class: "block text-sm font-medium text-slate-700 mb-2" %>
+              <%= f.select :address_state,
+                  options_for_select(@states_by_country.fetch(f.object.address_country, []), f.object.address_state),
+                    { include_blank: "Select state/province" },
+                    {
+                      class: "w-full rounded-lg border border-slate-300 px-4 py-3",
+                      data: { signup_target: "state" }
+                    } %>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <%= f.label :address_city, class: "block text-sm font-medium text-slate-700 mb-2" %>
+              <%= f.text_field :address_city, class: "w-full rounded-lg border border-slate-300 px-4 py-3" %>
+            </div>
+
+            <div>
+              <%= f.label :address_zip_code, class: "block text-sm font-medium text-slate-700 mb-2" %>
+              <%= f.text_field :address_zip_code, class: "w-full rounded-lg border border-slate-300 px-4 py-3" %>
+            </div>
+          </div>
+
+          <%= f.submit "Create Account",
+                class: "w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition" %>
+
+        </div>
+
+      <% end %>
+
+    </div>
+
+      <!-- Divider -->
+      <div class="my-8 flex items-center">
+        <div class="flex-grow border-t border-slate-300"></div>
+        <span class="mx-4 text-sm text-slate-400">or</span>
+        <div class="flex-grow border-t border-slate-300"></div>
+      </div>
+
+      <div class="text-center text-sm text-slate-500">
+        <%= render "devise/shared/links" %>
+      </div>
+
+    </div>
+  </div>
+
+</div>

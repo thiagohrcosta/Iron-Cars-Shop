@@ -101,6 +101,7 @@ brands_data.each do |name, country, founded_year|
     brand.user = admin
     brand.active = true
   end
+  puts "Created brand: #{name}"
 end
 
 puts "Seed completed successfully. Total brands: #{Brand.count}"

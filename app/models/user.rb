@@ -6,7 +6,16 @@ class User < ApplicationRecord
 
   has_one_attached :photo
 
-  validates :full_name, :address_street, :address_number, :address_city, :address_state, :address_zip_code, :address_country, presence: true
+  validates :full_name,
+            :document_id,
+            :phone_number,
+            :address_street,
+            :address_number,
+            :address_city,
+            :address_state,
+            :address_zip_code,
+            :address_country,
+            presence: true
 
   enum :role, { user: 0, admin: 1 }
 end
