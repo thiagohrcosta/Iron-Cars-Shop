@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_22_162903) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_22_212306) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -143,6 +143,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_22_162903) do
     t.index ["year"], name: "index_vehicles_on_year"
   end
 
+  create_table "veihcle_listings", force: :cascade do |t|
+    t.bigint "vehicle_id", null: false
+    t.bigint "seller_id", null: false
+    t.string "status", default: "draft", null: false
+    t.datetime "published_at"
+    t.datetime "expires_at"
+    t.integer "views_count", default: 0, null: false
+    t.boolean "featured", default: false, null: false
+    t.index ["seller_id"], name: "index_veihcle_listings_on_seller_id"
+    t.index ["vehicle_id"], name: "index_veihcle_listings_on_vehicle_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "brands", "users"
@@ -151,4 +163,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_22_162903) do
   add_foreign_key "vehicle_features", "vehicles"
   add_foreign_key "vehicles", "car_models"
   add_foreign_key "vehicles", "users"
+  add_foreign_key "veihcle_listings", "users", column: "seller_id"
+  add_foreign_key "veihcle_listings", "vehicles"
 end

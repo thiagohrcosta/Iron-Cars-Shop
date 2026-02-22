@@ -1,43 +1,15 @@
 <div class="min-h-screen bg-slate-100 flex">
 
-  <!-- Sidebar -->
-  <aside
-    class="hidden lg:flex lg:flex-col w-64 text-white bg-cover bg-center bg-no-repeat"
-    style="background-image: url('<%= asset_path("sidebar.png") %>');"
-  >
+  <%= render "shared/user_sidebar" %>
 
-    <div class="p-6 border-b border-white/10">
-      <%= image_tag "logo.png", alt: "Iron Cars Shop", class: "h-14 w-auto" %>
-    </div>
-
-    <nav class="flex-1 px-4 py-6 space-y-2">
-      <%= link_to "Dashboard", user_dashboard_path, class: "block px-4 py-2 rounded-lg bg-white/10" %>
-      <%= link_to "My Listings", user_vehicles_path, class: "block px-4 py-2 rounded-lg hover:bg-white/10" %>
-      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-white/10">Offers</a>
-      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-white/10">Messages</a>
-      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-white/10">Settings</a>
-    </nav>
-
-    <div class="p-6 border-t border-white/10 text-sm">
-      John Smith<br>
-      <span class="text-slate-300">Seller</span>
-    </div>
-
-  </aside>
-
-
-  <!-- Main Content -->
   <div class="flex-1 flex flex-col">
 
-    <!-- Topbar -->
     <header class="bg-white shadow-sm px-6 py-4 flex justify-between items-center">
       <h1 class="text-2xl font-bold text-slate-800">Dashboard</h1>
 
       <%= link_to "+ Sell Your Car", new_user_vehicle_path, class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" %>
     </header>
 
-
-    <!-- Content -->
     <main class="p-6 space-y-8">
 
       <!-- Stats Cards -->
@@ -109,7 +81,7 @@
           <!-- My Listings -->
           <div class="bg-white p-6 rounded-xl shadow-sm">
             <div class="flex items-center justify-between mb-6">
-              <h2 class="text-lg font-semibold">My Listings</h2>
+              <h2 class="text-lg font-semibold">My Cars</h2>
               <%= link_to "View All", user_vehicles_path, class: "text-blue-600 text-sm" %>
             </div>
 
@@ -126,12 +98,16 @@
                         <p class="text-sm text-slate-500"><%= vehicle.title_status.to_s.humanize %> · <%= number_with_delimiter(vehicle.mileage || 0) %> miles</p>
                       </div>
                     </div>
-                    <p class="font-semibold"><%= number_to_currency(vehicle.price || 0) %></p>
+                    <div>
+                      <p class="text-2xl font-bold"><%= number_to_currency(vehicle.price || 0) %></p>
+                      <%= link_to "Edit", "#", class: "text-blue-600 text-sm" %>
+                      <%= link_to "List to Marketplace", "#", method: :post, class: "text-green-600 text-sm ml-4" %>
+                    </div>
                   </div>
                 <% end %>
               <% else %>
                 <div class="text-sm text-slate-500">
-                  You don’t have listings yet.
+                  You don’t have cars listed yet.
                   <%= link_to "Create your first listing", new_user_vehicle_path, class: "text-blue-600" %>.
                 </div>
               <% end %>

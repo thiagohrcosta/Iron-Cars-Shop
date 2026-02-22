@@ -1,32 +1,6 @@
 <% selected_brand_id = @vehicle.car_model&.brand_id %>
 <div class="min-h-screen bg-slate-100 flex" data-controller="vehicle-form" data-vehicle-form-models-by-brand-value="<%= @models_by_brand.to_json %>">
-  <aside
-    class="hidden lg:flex lg:flex-col w-64 text-slate-100 bg-cover bg-center bg-no-repeat"
-    style="background-image: url('<%= asset_path("sidebar.png") %>');"
-  >
-    <div class="p-6 border-b border-slate-800">
-      <%= image_tag "logo.png", alt: "Iron Cars Shop", class: "h-14 w-auto" %>
-    </div>
-
-    <nav class="flex-1 px-4 py-6 space-y-2 text-sm">
-      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-slate-800">Dashboard</a>
-      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-slate-800">My Listings</a>
-      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-slate-800">Offers</a>
-      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-slate-800">Messages</a>
-      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-slate-800">Sales</a>
-      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-slate-800">Analytics</a>
-      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-slate-800">Settings</a>
-    </nav>
-
-    <div class="px-4 pb-6">
-      <a href="<%= new_user_vehicle_path %>" class="block text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg">+ Sell Your Car</a>
-    </div>
-
-    <div class="px-4 pb-6 text-sm text-slate-300">
-      <p class="font-semibold text-white"><%= current_user.full_name.presence || current_user.email %></p>
-      <p>Seller</p>
-    </div>
-  </aside>
+  <%= render "shared/user_sidebar" %>
 
   <div class="flex-1 flex flex-col">
     <header class="bg-white border-b border-slate-200 px-6 py-5 flex flex-wrap gap-4 items-center justify-between">
@@ -316,12 +290,12 @@
                  data-vehicle-form-target="previewImage">
 
             <div class="p-5 space-y-2">
-              <h3 class="text-3xl font-semibold text-slate-900">Listing Preview</h3>
-              <p class="text-5xl font-bold text-slate-900" data-vehicle-form-target="previewPrice">$0</p>
-              <p class="text-3xl text-slate-700" data-vehicle-form-target="previewName">Year Brand Model</p>
-              <p class="text-3xl text-slate-600" data-vehicle-form-target="previewMileage">0 miles</p>
-              <p class="text-3xl text-slate-600" data-vehicle-form-target="previewSpecs">Transmission · Fuel · Drivetrain · Doors · Seats</p>
-              <p class="text-3xl text-slate-700" data-vehicle-form-target="previewTitle">Clean Title</p>
+              <h4 class="text-3xl font-semibold text-slate-900">Listing Preview</h4>
+              <p class="text-4xl font-bold text-slate-900" data-vehicle-form-target="previewPrice">$0</p>
+              <p class="text-1xl text-slate-700" data-vehicle-form-target="previewName">Year Brand Model</p>
+              <p class="text-1xl text-slate-600" data-vehicle-form-target="previewMileage">0 miles</p>
+              <p class="text-1xl text-slate-600" data-vehicle-form-target="previewSpecs">Transmission · Fuel · Drivetrain · Doors · Seats</p>
+              <p class="text-1xl text-slate-700" data-vehicle-form-target="previewTitle">Clean Title</p>
             </div>
           </section>
         </aside>
