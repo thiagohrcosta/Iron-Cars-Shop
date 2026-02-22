@@ -23,6 +23,9 @@
   </head>
 
   <body>
-    <%= yield %>
+    <main class="mx-auto">
+      <%= render "shared/navbar" if controller_name == "home" %>
+      <%= yield %>
+    </main>
   </body>
 </html>

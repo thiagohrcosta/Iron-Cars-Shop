@@ -1,0 +1,78 @@
+<section class="relative w-full bg-gradient-to-r from-[#0b1d3a] via-[#0b1d3a] to-[#0b1d3a] text-white overflow-hidden">
+
+  <!-- NAVBAR -->
+ 
+    <!-- BACKGROUND GLOW EFFECT -->
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.15),transparent_40%)]"></div>
+
+    <!-- BACKGROUND BANNER IMAGE -->
+    <div class="absolute inset-0 bg-right bg-no-repeat pointer-events-none"
+      style="background-image: url('<%= asset_path "carbannerbg.png" %>'); background-size: 65%;"></div>
+
+    <!-- LEFT DARK OVERLAY -->
+    <div class="absolute inset-y-0 left-0 w-full md:w-[70%] bg-gradient-to-r from-[#0b1d3a]/95 via-[#0b1d3a]/75 to-transparent"></div>
+
+  <!-- CONTENT CONTAINER -->
+  <div class="relative max-w-7xl mx-auto px-6 pt-20 pb-28 flex flex-col items-start justify-between">
+
+    <!-- TEXT AREA -->
+    <div class="max-w-2xl">
+      <h1 class="text-4xl md:text-5xl font-bold leading-tight">
+        Find your ideal car.
+        <br>
+        <span class="text-blue-300">Powered by Iron.</span>
+      </h1>
+
+      <p class="mt-5 text-lg text-blue-100">
+        The largest vehicle marketplace in the USA and Canada with over 1 million cars for sale.
+      </p>
+
+      <!-- BUTTONS -->
+      <div class="mt-8 flex gap-4">
+        <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold shadow-xl transition">
+          Browse cars
+        </button>
+
+        <button class="bg-white/10 backdrop-blur px-6 py-3 rounded-lg font-semibold border border-white/30 hover:bg-white/20 transition">
+          List your car
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SEARCH BAR -->
+  <div class="absolute left-1/2 -bottom-8 transform -translate-x-1/2 w-full px-6">
+    <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-2xl p-4 md:p-6 grid grid-cols-2 md:grid-cols-6 gap-4">
+
+      <select class="border rounded-lg px-4 py-2 text-gray-700">
+        <option>Brand</option>
+      </select>
+
+      <select class="border rounded-lg px-4 py-2 text-gray-700">
+        <option>Model</option>
+      </select>
+
+      <select class="border rounded-lg px-4 py-2 text-gray-700">
+        <option>Year</option>
+      </select>
+
+      <select class="border rounded-lg px-4 py-2 text-gray-700">
+        <option>Price range</option>
+      </select>
+
+      <select class="border rounded-lg px-4 py-2 text-gray-700">
+        <option>Location</option>
+      </select>
+
+      <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg px-6 py-2">
+        Search
+      </button>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- Spacer because search bar is absolute -->
+<div class="h-24 bg-gray-100"></div>

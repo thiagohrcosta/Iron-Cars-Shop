@@ -1,0 +1,41 @@
+<div class="min-h-screen bg-slate-100 p-6">
+  <div class="max-w-6xl mx-auto space-y-6">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800">My Listings</h1>
+        <p class="text-sm text-slate-500">Manage all vehicles you published.</p>
+      </div>
+
+      <%= link_to "+ Sell Your Car", new_user_vehicle_path, class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" %>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <% if @vehicles.any? %>
+        <div class="divide-y divide-slate-100">
+          <% @vehicles.each do |vehicle| %>
+            <div class="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div>
+                <p class="font-semibold text-slate-900"><%= vehicle.full_name.presence || "Vehicle ##{vehicle.id}" %></p>
+                <p class="text-sm text-slate-500 mt-1">
+                  VIN: <%= vehicle.vin %> ·
+                  <%= vehicle.title_status.to_s.humanize %> ·
+                  <%= number_with_delimiter(vehicle.mileage || 0) %> miles
+                </p>
+              </div>
+
+              <div class="text-right">
+                <p class="font-bold text-slate-900"><%= number_to_currency(vehicle.price || 0) %></p>
+                <p class="text-xs text-slate-500"><%= l(vehicle.created_at, format: :short) %></p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="p-10 text-center text-slate-500">
+          <p class="mb-3">You don’t have listings yet.</p>
+          <%= link_to "Create your first listing", new_user_vehicle_path, class: "text-blue-600" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,13 +1,7 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { registrations: "users/registrations" }
 
-  authenticated :user do
-    root "dashboard_redirects#show", as: :authenticated_root
-  end
-
-  unauthenticated do
-    root "devise/sessions#new", as: :unauthenticated_root
-  end
+  root "pages#home"
 
   get "dashboard", to: "dashboard_redirects#show"
 
@@ -17,6 +11,7 @@ Rails.application.routes.draw do
 
   namespace :user do
     get "dashboard", to: "dashboards#show"
+    resources :vehicles, only: [ :index, :new, :create ]
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

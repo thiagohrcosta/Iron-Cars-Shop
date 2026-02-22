@@ -1,4 +1,193 @@
-<section class="min-h-screen p-6 bg-slate-100">
-  <h1 class="text-2xl font-semibold text-slate-900">User Dashboard</h1>
-  <p class="mt-2 text-slate-600">Layout pendente. Esta página será personalizada no próximo passo.</p>
-</section>
+<div class="min-h-screen bg-slate-100 flex">
+
+  <!-- Sidebar -->
+  <aside
+    class="hidden lg:flex lg:flex-col w-64 text-white bg-cover bg-center bg-no-repeat"
+    style="background-image: url('<%= asset_path("sidebar.png") %>');"
+  >
+
+    <div class="p-6 border-b border-white/10">
+      <%= image_tag "logo.png", alt: "Iron Cars Shop", class: "h-14 w-auto" %>
+    </div>
+
+    <nav class="flex-1 px-4 py-6 space-y-2">
+      <%= link_to "Dashboard", user_dashboard_path, class: "block px-4 py-2 rounded-lg bg-white/10" %>
+      <%= link_to "My Listings", user_vehicles_path, class: "block px-4 py-2 rounded-lg hover:bg-white/10" %>
+      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-white/10">Offers</a>
+      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-white/10">Messages</a>
+      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-white/10">Settings</a>
+    </nav>
+
+    <div class="p-6 border-t border-white/10 text-sm">
+      John Smith<br>
+      <span class="text-slate-300">Seller</span>
+    </div>
+
+  </aside>
+
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col">
+
+    <!-- Topbar -->
+    <header class="bg-white shadow-sm px-6 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-slate-800">Dashboard</h1>
+
+      <%= link_to "+ Sell Your Car", new_user_vehicle_path, class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" %>
+    </header>
+
+
+    <!-- Content -->
+    <main class="p-6 space-y-8">
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+
+        <div class="bg-white p-6 rounded-xl shadow-sm">
+          <p class="text-sm text-slate-500">Earnings</p>
+          <h2 class="text-2xl font-bold mt-2">$12,450</h2>
+          <p class="text-green-500 text-sm mt-1">+12.4%</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm">
+          <p class="text-sm text-slate-500">Active Listings</p>
+          <h2 class="text-2xl font-bold mt-2">8</h2>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm">
+          <p class="text-sm text-slate-500">Pending Offers</p>
+          <h2 class="text-2xl font-bold mt-2">3</h2>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm">
+          <p class="text-sm text-slate-500">Total Views</p>
+          <h2 class="text-2xl font-bold mt-2">32,485</h2>
+        </div>
+
+      </div>
+
+
+      <!-- Two Column Layout -->
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+        <!-- Left Column -->
+        <div class="xl:col-span-2 space-y-8">
+
+          <!-- Ongoing Deals -->
+          <div class="bg-white p-6 rounded-xl shadow-sm">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-lg font-semibold">Ongoing Deals</h2>
+              <a href="#" class="text-blue-600 text-sm">View All</a>
+            </div>
+
+            <div class="space-y-4">
+
+              <div class="flex justify-between items-center border-b pb-4">
+                <div>
+                  <p class="font-medium">Mark Johnson</p>
+                  <p class="text-sm text-slate-500">2021 BMW M4</p>
+                </div>
+                <button class="bg-blue-600 text-white px-4 py-1 rounded-lg text-sm">
+                  Respond
+                </button>
+              </div>
+
+              <div class="flex justify-between items-center border-b pb-4">
+                <div>
+                  <p class="font-medium">Sarah Davis</p>
+                  <p class="text-sm text-slate-500">2020 Ford Mustang GT</p>
+                </div>
+                <button class="bg-blue-600 text-white px-4 py-1 rounded-lg text-sm">
+                  Respond
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+
+          <!-- My Listings -->
+          <div class="bg-white p-6 rounded-xl shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-lg font-semibold">My Listings</h2>
+              <%= link_to "View All", user_vehicles_path, class: "text-blue-600 text-sm" %>
+            </div>
+
+            <div class="space-y-4">
+              <% if @my_listings.any? %>
+                <% @my_listings.each do |vehicle| %>
+                  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b pb-4 last:border-b-0 last:pb-0">
+                    <div class="flex items-center gap-4">
+                      <div>
+                        <%= image_tag vehicle.photos.first, class: "w-16 h-16 object-cover rounded-lg" if vehicle.photos.attached? %>
+                      </div>
+                      <div>
+                        <p class="font-medium"><%= vehicle.full_name.presence || "Vehicle ##{vehicle.id}" %></p>
+                        <p class="text-sm text-slate-500"><%= vehicle.title_status.to_s.humanize %> · <%= number_with_delimiter(vehicle.mileage || 0) %> miles</p>
+                      </div>
+                    </div>
+                    <p class="font-semibold"><%= number_to_currency(vehicle.price || 0) %></p>
+                  </div>
+                <% end %>
+              <% else %>
+                <div class="text-sm text-slate-500">
+                  You don’t have listings yet.
+                  <%= link_to "Create your first listing", new_user_vehicle_path, class: "text-blue-600" %>.
+                </div>
+              <% end %>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Right Column -->
+        <div class="space-y-8">
+
+          <!-- Weekly Earnings -->
+          <div class="bg-white p-6 rounded-xl shadow-sm">
+            <h2 class="text-lg font-semibold mb-4">This Week</h2>
+            <p class="text-3xl font-bold">$1,250</p>
+            <p class="text-green-500 text-sm mt-2">+10% growth</p>
+          </div>
+
+          <!-- Listing Views -->
+          <div class="bg-white p-6 rounded-xl shadow-sm">
+            <h2 class="text-lg font-semibold mb-4">Top Listings</h2>
+
+            <div class="space-y-3 text-sm">
+
+              <div>
+                <div class="flex justify-between">
+                  <span>2020 Mustang GT</span>
+                  <span>1,200</span>
+                </div>
+                <div class="w-full bg-slate-200 h-2 rounded mt-1">
+                  <div class="bg-blue-600 h-2 rounded w-3/4"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between">
+                  <span>2021 BMW M4</span>
+                  <span>870</span>
+                </div>
+                <div class="w-full bg-slate-200 h-2 rounded mt-1">
+                  <div class="bg-blue-600 h-2 rounded w-2/3"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+</div>
