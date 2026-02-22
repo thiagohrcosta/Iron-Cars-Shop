@@ -1,51 +1,57 @@
 class Vehicle < ApplicationRecord
   belongs_to :car_model
+  belongs_to :user
 
   has_one  :listing,          dependent: :destroy
   has_many :vehicle_features, dependent: :destroy
-  has_many :photos,           dependent: :destroy, as: :attachable
+  has_many_attached :photos
 
-  enum transmission: {
+  enum :transmission, {
     automatic:    "automatic",
     manual:       "manual",
     cvt:          "cvt",
     semi_auto:    "semi_auto"
-  }, _prefix: true
+  }, prefix: true
 
-  enum fuel_type: {
+  enum :fuel_type, {
     gasoline:     "gasoline",
     diesel:       "diesel",
     hybrid:       "hybrid",
     plug_in_hybrid: "plug_in_hybrid",
     electric:     "electric",
     hydrogen:     "hydrogen"
-  }, _prefix: true
+  }, prefix: true
 
-  enum drivetrain: {
+  enum :drivetrain, {
     fwd:          "fwd",   # Front-Wheel Drive
     rwd:          "rwd",   # Rear-Wheel Drive
     awd:          "awd",   # All-Wheel Drive
     four_wd:      "4wd"    # Four-Wheel Drive
-  }, _prefix: true
+  }, prefix: true
 
-  enum title_status: {
+  enum :title_status, {
     clean:        "clean",
     rebuilt:      "rebuilt",
     salvage:      "salvage",
     flood:        "flood",
     lemon:        "lemon"
-  }, _prefix: true
+  }, prefix: true
 
-  enum condition: {
+  enum :condition, {
     new_vehicle:        "new",
     used:               "used",
     certified_pre_owned: "certified_pre_owned"
-  }, _prefix: true
+  }, prefix: true
+
+  enum :currency, {
+    usd: 0,
+    cad: 1
+  }
 
 
   validates :vin,       presence: true, uniqueness: { case_sensitive: false },
-                        format: { with: /\A[A-HJ-NPR-Z0-9]{17}\z/i,
-                                  message: "must be a valid 17-character VIN" }
+                        format: { with: /\A\d{17}\z/,
+                                  message: "must have exactly 17 digits" }
 
   validates :year,      presence: true,
                         numericality: {
@@ -61,7 +67,7 @@ class Vehicle < ApplicationRecord
   validates :title_status, presence: true
 
   validates :price_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :currency,    presence: true, length: { is: 3 }
+  validates :currency,    presence: true
 
   validates :doors,     numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
   validates :seats,     numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
@@ -90,8 +96,8 @@ class Vehicle < ApplicationRecord
   scope :by_exterior_color,   ->(color) { where("lower(exterior_color) = ?", color.downcase) }
   scope :recent,              -> { order(created_at: :desc) }
 
-  delegate :name,  to: :car_model, prefix: :model
-  delegate :brand, to: :car_model
+  delegate :name,  to: :car_model, prefix: :car_model, allow_nil: true
+  delegate :brand, to: :car_model, allow_nil: true
 
   def price
     return nil if price_cents.nil?
@@ -104,7 +110,7 @@ class Vehicle < ApplicationRecord
   end
 
   def full_name
-    "#{year} #{brand.name} #{car_model.name}"
+    "#{year} #{brand&.name} #{car_model&.name}".squish
   end
 
   def clean_history?

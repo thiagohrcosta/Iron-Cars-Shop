@@ -24,7 +24,7 @@
 
   <body>
     <main class="mx-auto">
-      <%= render "shared/navbar" unless devise_controller? %>
+      <%= render "shared/navbar" if controller_name == "home" %>
       <%= yield %>
     </main>
   </body>

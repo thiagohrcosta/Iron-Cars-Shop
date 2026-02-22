@@ -5,6 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_one_attached :photo
+  has_many :vehicles, dependent: :destroy
 
   validates :full_name,
             :document_id,
