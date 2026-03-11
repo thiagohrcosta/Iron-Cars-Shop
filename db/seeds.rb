@@ -11,3 +11,4 @@
 Brand.destroy_all
 require_relative "seed_folder/brand_seed"
 require_relative "seed_folder/car_model_seed"
+require_relative "seed_folder/marketplace_seed"
