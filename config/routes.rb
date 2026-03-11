@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: "users/registrations" }
 
   root "pages#home"
+  get "cars", to: "cars#index", as: :cars
+  get "cars/:id", to: "cars#show", as: :car
 
   get "dashboard", to: "dashboard_redirects#show"
 
@@ -11,7 +13,11 @@ Rails.application.routes.draw do
 
   namespace :user do
     get "dashboard", to: "dashboards#show"
-    resources :vehicles, only: [ :index, :new, :create ]
+    resources :vehicles, only: [ :index, :new, :create ] do
+      member do
+        post :publish
+      end
+    end
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

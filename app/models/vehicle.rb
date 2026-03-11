@@ -2,7 +2,7 @@ class Vehicle < ApplicationRecord
   belongs_to :car_model
   belongs_to :user
 
-  has_one  :listing,          dependent: :destroy
+  has_one  :veihcle_listing,  dependent: :destroy
   has_many :vehicle_features, dependent: :destroy
   has_many_attached :photos
 
@@ -80,7 +80,8 @@ class Vehicle < ApplicationRecord
 
   validate :title_status_consistent_with_flags
 
-  scope :active,              -> { joins(:listing).where(listings: { status: :active }) }
+  scope :active,              -> { joins(:veihcle_listing).where(veihcle_listings: { status: "published" }) }
+  scope :published_on_marketplace, -> { joins(:veihcle_listing).where(veihcle_listings: { status: "published" }) }
   scope :by_year,             ->(year) { where(year: year) }
   scope :year_range,          ->(from, to) { where(year: from..to) }
   scope :by_condition,        ->(cond) { where(condition: cond) }
