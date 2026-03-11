@@ -25,6 +25,17 @@ class User::VehiclesController < ApplicationController
     end
   end
 
+  def publish
+    @vehicle = current_user.vehicles.find(params[:id])
+    listing = @vehicle.veihcle_listing || @vehicle.build_veihcle_listing(seller: current_user)
+    
+    if listing.update(status: 'published', published_at: Time.current)
+      redirect_to request.referer || user_vehicles_path, notice: "Vehicle successfully listed on the marketplace!"
+    else
+      redirect_to request.referer || user_vehicles_path, alert: "Could not list the vehicle."
+    end
+  end
+
   private
 
   def set_form_options

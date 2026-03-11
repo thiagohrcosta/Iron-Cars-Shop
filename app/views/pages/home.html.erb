@@ -1,78 +1,68 @@
-<section class="relative w-full bg-gradient-to-r from-[#0b1d3a] via-[#0b1d3a] to-[#0b1d3a] text-white overflow-hidden">
-
-  <!-- NAVBAR -->
- 
-    <!-- BACKGROUND GLOW EFFECT -->
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.15),transparent_40%)]"></div>
-
-    <!-- BACKGROUND BANNER IMAGE -->
-    <div class="absolute inset-0 bg-right bg-no-repeat pointer-events-none"
-      style="background-image: url('<%= asset_path "carbannerbg.png" %>'); background-size: 65%;"></div>
-
-    <!-- LEFT DARK OVERLAY -->
-    <div class="absolute inset-y-0 left-0 w-full md:w-[70%] bg-gradient-to-r from-[#0b1d3a]/95 via-[#0b1d3a]/75 to-transparent"></div>
-
-  <!-- CONTENT CONTAINER -->
-  <div class="relative max-w-7xl mx-auto px-6 pt-20 pb-28 flex flex-col items-start justify-between">
-
-    <!-- TEXT AREA -->
-    <div class="max-w-2xl">
-      <h1 class="text-4xl md:text-5xl font-bold leading-tight">
-        Find your ideal car.
-        <br>
-        <span class="text-blue-300">Powered by Iron.</span>
-      </h1>
-
-      <p class="mt-5 text-lg text-blue-100">
-        The largest vehicle marketplace in the USA and Canada with over 1 million cars for sale.
-      </p>
-
-      <!-- BUTTONS -->
-      <div class="mt-8 flex gap-4">
-        <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold shadow-xl transition">
-          Browse cars
-        </button>
-
-        <button class="bg-white/10 backdrop-blur px-6 py-3 rounded-lg font-semibold border border-white/30 hover:bg-white/20 transition">
-          List your car
-        </button>
+<section class="home-page min-h-screen bg-slate-100">
+  <div class="hero-banner shadow-xl">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div>
+        <h1>Find your ideal car.</h1>
+        <p>With Iron strength and the best curated listings in the market.</p>
+        <div class="hero-actions">
+          <%= link_to "Browse cars", cars_path, class: "hero-btn primary" %>
+          <button type="button" class="hero-btn secondary">Announce your car</button>
+        </div>
       </div>
-    </div>
-
-  </div>
-
-  <!-- SEARCH BAR -->
-  <div class="absolute left-1/2 -bottom-8 transform -translate-x-1/2 w-full px-6">
-    <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-2xl p-4 md:p-6 grid grid-cols-2 md:grid-cols-6 gap-4">
-
-      <select class="border rounded-lg px-4 py-2 text-gray-700">
-        <option>Brand</option>
-      </select>
-
-      <select class="border rounded-lg px-4 py-2 text-gray-700">
-        <option>Model</option>
-      </select>
-
-      <select class="border rounded-lg px-4 py-2 text-gray-700">
-        <option>Year</option>
-      </select>
-
-      <select class="border rounded-lg px-4 py-2 text-gray-700">
-        <option>Price range</option>
-      </select>
-
-      <select class="border rounded-lg px-4 py-2 text-gray-700">
-        <option>Location</option>
-      </select>
-
-      <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg px-6 py-2">
-        Search
-      </button>
-
+      <div class="hero-chip">+120,000 active vehicles</div>
     </div>
   </div>
 
+  <div class="search-strip shadow-xl">
+    <select><option>Brand</option></select>
+    <select><option>Model</option></select>
+    <select><option>Year</option></select>
+    <select><option>Price Range</option></select>
+    <select><option>Location</option></select>
+    <%= link_to "Search", cars_path, class: "search-btn" %>
+  </div>
+
+  <div class="home-container">
+    <h3>Categories</h3>
+    <div class="category-row">
+      <% @category_cards.each do |category| %>
+        <article>
+          <%= image_tag "carbanner.png", alt: category[:name] %>
+          <h4><%= category[:name] %></h4>
+          <p><%= number_with_delimiter(category[:count]) %> vehicles</p>
+        </article>
+      <% end %>
+    </div>
+
+    <h3>Featured Cars</h3>
+    <div class="featured-row">
+      <% if @featured_vehicles.any? %>
+        <% @featured_vehicles.each do |vehicle| %>
+          <article>
+            <span>Featured</span>
+            <%= image_tag(vehicle.photos.attached? ? url_for(vehicle.photos.first) : "carbanner.png", alt: vehicle.full_name) %>
+            <h4><%= vehicle.full_name %></h4>
+            <div class="featured-meta">
+              <p><%= number_to_currency(vehicle.price_cents / 100.0, precision: 0) %></p>
+              <%= link_to "View Details", car_path(vehicle) %>
+            </div>
+          </article>
+        <% end %>
+      <% else %>
+        <% 3.times do |index| %>
+          <article>
+            <span>Featured</span>
+            <%= image_tag "carbanner.png", alt: "Featured car" %>
+            <h4>BMW X1 <%= 2022 - index %> xDrive</h4>
+            <div class="featured-meta">
+              <p><%= number_to_currency(129_900 + (index * 8_000), precision: 0) %></p>
+              <%= link_to "View Details", cars_path %>
+            </div>
+          </article>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
 </section>
 
-<!-- Spacer because search bar is absolute -->
-<div class="h-24 bg-gray-100"></div>

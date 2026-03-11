@@ -1,0 +1,196 @@
+<section class="cars-index-page min-h-screen bg-slate-100">
+  <div class="cars-index-wrap">
+    <div class="breadcrumb">Home / Search vehicles</div>
+
+    <div class="headline-box">
+      Showing <strong><%= number_with_delimiter(@total_vehicles_count) %> vehicles</strong> across the country
+      <%= link_to "Search cars", cars_path, class: "headline-btn" %>
+    </div>
+
+    <div class="content-grid">
+      <aside class="filter-panel">
+        
+        <div class="filter-row open">
+          <div class="filter-header">
+            Body Type
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="filter-body">
+            <%= link_to cars_path(request.query_parameters.merge(body_type: params[:body_type] == 'suv' ? nil : 'suv')), class: "filter-option #{'active' if params[:body_type] == 'suv'}" do %>
+              <div class="filter-option-left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M4 8l1.5-4h13L20 8"/><path d="M12 12h.01"/></svg>
+                SUV
+              </div>
+              <span class="filter-count"><%= number_with_delimiter(@body_type_counts[CarModel.body_types['suv']] || @body_type_counts['suv'] || 0) %></span>
+            <% end %>
+            <%= link_to cars_path(request.query_parameters.merge(body_type: params[:body_type] == 'sedan' ? nil : 'sedan')), class: "filter-option #{'active' if params[:body_type] == 'sedan'}" do %>
+              <div class="filter-option-left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/><path d="M16 6h4a2 2 0 0 1 2 2v4l-4 4h-2"/><circle cx="10" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="M14 18h2"/></svg>
+                Sedan
+              </div>
+              <span class="filter-count"><%= number_with_delimiter(@body_type_counts[CarModel.body_types['sedan']] || @body_type_counts['sedan'] || 0) %></span>
+            <% end %>
+            <%= link_to cars_path(request.query_parameters.merge(body_type: params[:body_type] == 'truck' ? nil : 'truck')), class: "filter-option #{'active' if params[:body_type] == 'truck'}" do %>
+              <div class="filter-option-left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="10" width="20" height="8" rx="2"/><path d="M4 10V6a2 2 0 0 1 2-2h6.5l3.5 4h4a2 2 0 0 1 2 2v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/><path d="M5 18H2v-2"/><path d="M9 18h6"/></svg>
+                Pickup
+              </div>
+              <span class="filter-count"><%= number_with_delimiter(@body_type_counts[CarModel.body_types['truck']] || @body_type_counts['truck'] || 0) %></span>
+            <% end %>
+            <%= link_to cars_path(request.query_parameters.merge(body_type: params[:body_type] == 'sports' ? nil : 'sports')), class: "filter-option #{'active' if params[:body_type] == 'sports'}" do %>
+              <div class="filter-option-left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10l-2 2v4h2"/><path d="M19 10l2 2v4h-2"/><path d="M2 14h20"/><path d="M7 10V8a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+                Sports
+              </div>
+              <span class="filter-count"><%= number_with_delimiter(@body_type_counts[CarModel.body_types['sports']] || @body_type_counts['sports'] || 0) %></span>
+            <% end %>
+            <%= link_to cars_path(request.query_parameters.merge(body_type: params[:body_type] == 'electric' ? nil : 'electric')), class: "filter-option #{'active' if params[:body_type] == 'electric'}" do %>
+              <div class="filter-option-left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M12 8v2"/><path d="M12 14v2"/><path d="M15 11h-6"/></svg>
+                Electric
+              </div>
+              <span class="filter-count"><%= number_with_delimiter(@body_type_counts[CarModel.body_types['electric']] || @body_type_counts['electric'] || 0) %></span>
+            <% end %>
+            <%= link_to cars_path(request.query_parameters.merge(body_type: params[:body_type] == 'armored' ? nil : 'armored')), class: "filter-option #{'active' if params[:body_type] == 'armored'}" do %>
+              <div class="filter-option-left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                Armored
+              </div>
+              <span class="filter-count">0</span>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-header bg-gray-50">
+            Advanced Filters
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-header">
+            Brand
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-header">
+            Model
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="filter-row open">
+          <div class="filter-header">
+            Year
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="filter-body text-center pb-5">
+            <div class="range-slider">
+              <div class="range-track"></div>
+              <div class="range-handle left"></div>
+              <div class="range-handle right"></div>
+            </div>
+            <div class="range-labels">
+              <span>1990</span>
+              <span>2026</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-header">
+            Price range
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-header">
+            Mileage
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-header">
+            Location
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-header">
+            Color
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-header">
+            Transmission
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-header">
+            Plate ending
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="filter-actions">
+          <button type="button" class="clear-btn">Clear filters</button>
+          <%= link_to "Search", cars_path, class: "apply-filter-btn mt-3" %>
+        </div>
+      </aside>
+
+      <div class="results-area">
+        <div class="results-top">
+          <select>
+            <option>Most relevant</option>
+          </select>
+          <div class="pagination">1 ... 3 4 5 <strong>5</strong> 75 ></div>
+        </div>
+
+        <div class="cards-grid">
+          <% if @vehicles.any? %>
+            <% @vehicles.each_with_index do |vehicle, index| %>
+              <article>
+                <% if index == 0 %><span class="tag featured">Featured</span><% end %>
+                <% if index == 1 %><span class="tag special">Special offer</span><% end %>
+                <%= image_tag(vehicle.photos.attached? ? url_for(vehicle.photos.first) : "carbanner.png", alt: vehicle.full_name) %>
+                <h3><%= vehicle.full_name %></h3>
+                <p class="meta"><%= number_with_delimiter(vehicle.mileage) %> mi - <%= vehicle.user&.address_city.presence || "Los Angeles" %></p>
+                <p class="price"><%= number_to_currency(vehicle.price_cents / 100.0, precision: 0) %></p>
+                <%= link_to "View details", car_path(vehicle), class: "card-btn" %>
+              </article>
+            <% end %>
+          <% else %>
+            <% 9.times do |index| %>
+              <article>
+                <% if index == 0 %><span class="tag featured">Featured</span><% end %>
+                <% if index == 1 %><span class="tag special">Special offer</span><% end %>
+                <%= image_tag "carbanner.png", alt: "Car" %>
+                <h3>Tesla Model 3 <%= 2022 - (index % 3) %></h3>
+                <p class="meta">44,000 mi - San Francisco</p>
+                <p class="price"><%= number_to_currency(44_500 - ((index % 4) * 1_100), precision: 0) %></p>
+                <%= link_to "View details", cars_path, class: "card-btn" %>
+              </article>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="sell-banner shadow-xl">
+      <h3>Do you have a car to sell?</h3>
+      <p>Announce on the largest vehicle marketplace with millions of monthly visits.</p>
+      <button type="button">Announce my car</button>
+    </div>
+  </div>
+</section>
+
