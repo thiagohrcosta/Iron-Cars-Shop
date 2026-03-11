@@ -27,12 +27,16 @@ if users_to_create.positive?
   now = Time.current
   user_rows = []
 
+  # Bcrypt is intentionally slow by design. 
+  # Hashing "12345678" 12,000 times sequentially halts the computer. We digest it once and reuse it across all seed users!
+  default_password_hash = Devise::Encryptor.digest(User, "12345678")
+
   users_to_create.times do |index|
     sequence = existing_seed_users + index + 1
 
     user_rows << {
       email: "seed_user_#{sequence}@ironcars.com",
-      encrypted_password: Devise::Encryptor.digest(User, "12345678"),
+      encrypted_password: default_password_hash,
       full_name: "Seed User #{sequence}",
       document_id: "#{900_000_000_00 + sequence}",
       phone_number: "+1-555-#{(10_000 + sequence).to_s[-4, 4]}",
@@ -49,13 +53,18 @@ if users_to_create.positive?
       updated_at: now
     }
 
-    next unless user_rows.size >= batch_size
-
-    User.insert_all!(user_rows)
-    user_rows.clear
+    if user_rows.size >= batch_size
+      User.insert_all!(user_rows)
+      user_rows.clear
+      pct = ((index + 1) * 100.0 / users_to_create).round(2)
+      puts "  => Created #{index + 1}/#{users_to_create} users (#{pct}%)"
+    end
   end
 
-  User.insert_all!(user_rows) if user_rows.any?
+  if user_rows.any?
+    User.insert_all!(user_rows)
+    puts "  => Created #{users_to_create}/#{users_to_create} users (100.0%)"
+  end
 end
 
 seller_ids = User.where(role: :user).pluck(:id)
@@ -149,7 +158,8 @@ while created < vehicles_target
 
   vin_counter += chunk
   created += chunk
-  puts "Inserted #{created}/#{vehicles_target} vehicles"
+  pct = (created * 100.0 / vehicles_target).round(2)
+  puts "  => Inserted #{created}/#{vehicles_target} vehicles and listings (#{pct}%)"
 end
 
 puts "Marketplace seed completed: users=#{User.count}, vehicles=#{Vehicle.count}, listings=#{VeihcleListing.count}"
