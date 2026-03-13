@@ -1,0 +1,48 @@
+<div class="analytics-page">
+  <%= render "shared/user_sidebar" %>
+
+  <div class="analytics-content">
+    <header class="analytics-header">
+      <div>
+        <p class="eyebrow">Iron Cars Analytics</p>
+        <h1>Performance Dashboard</h1>
+        <p class="subtitle">Plan: <%= current_user.active_subscription&.plan_label %></p>
+      </div>
+      <%= link_to "+ Sell Your Car", new_user_vehicle_path, class: "analytics-cta" %>
+    </header>
+
+    <section class="analytics-stats">
+      <article><p>Total Cars</p><strong><%= @stats[:total_cars] %></strong></article>
+      <article><p>Published</p><strong><%= @stats[:published_cars] %></strong></article>
+      <article><p>Sold</p><strong><%= @stats[:sold_cars] %></strong></article>
+      <article><p>Total Views</p><strong><%= number_with_delimiter(@stats[:total_views]) %></strong></article>
+      <article><p>Average Ticket</p><strong><%= number_to_currency(@stats[:avg_ticket]) %></strong></article>
+    </section>
+
+    <section class="analytics-grid">
+      <article class="analytics-card analytics-card-large">
+        <h2>Top Performing Listings</h2>
+        <div class="table-list">
+          <% @top_vehicles.each do |vehicle| %>
+            <div class="row">
+              <span><%= vehicle.full_name.presence || "Vehicle ##{vehicle.id}" %></span>
+              <strong><%= vehicle.vehicle_listing&.views_count.to_i %> views</strong>
+            </div>
+          <% end %>
+        </div>
+      </article>
+
+      <article class="analytics-card">
+        <h2>Lead Sources</h2>
+        <ul>
+          <% @lead_sources.each do |source| %>
+            <li>
+              <span><%= source[:name] %></span>
+              <strong><%= source[:percent] %>%</strong>
+            </li>
+          <% end %>
+        </ul>
+      </article>
+    </section>
+  </div>
+</div>

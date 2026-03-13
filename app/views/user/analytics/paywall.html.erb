@@ -1,0 +1,28 @@
+<div class="analytics-paywall-page">
+  <%= render "shared/user_sidebar" %>
+
+  <div class="analytics-paywall-content">
+    <header>
+      <p class="eyebrow">Iron Cars Analytics</p>
+      <h1>Unlock Analytics</h1>
+      <p>Choose a monthly plan to access premium analytics dashboards and insights.</p>
+    </header>
+
+    <section class="plans-grid">
+      <% @plans.each do |plan| %>
+        <article class="plan-card">
+          <h2><%= plan[:title] %></h2>
+          <p class="price"><%= plan[:price] %></p>
+          <p class="description"><%= plan[:description] %></p>
+          <ul>
+            <% plan[:features].each do |feature| %>
+              <li><%= feature %></li>
+            <% end %>
+          </ul>
+
+          <%= button_to "Subscribe", user_billing_checkout_path(plan: plan[:key]), method: :post, class: "subscribe-btn" %>
+        </article>
+      <% end %>
+    </section>
+  </div>
+</div>
