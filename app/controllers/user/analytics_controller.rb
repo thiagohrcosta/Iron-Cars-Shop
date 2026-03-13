@@ -52,7 +52,7 @@ class User::AnalyticsController < ApplicationController
     dates = (range_start..Date.current).to_a
 
     sold_by_day = sold_listings.each_with_object(Hash.new { |hash, key| hash[key] = { revenue_cents: 0, sales_count: 0 } }) do |vehicle, grouped|
-      sold_on = vehicle.vehicle_listing&.updated_at&.to_date
+      sold_on = listing_reference_date(vehicle.vehicle_listing)
       next if sold_on.blank? || sold_on < range_start
 
       grouped[sold_on][:revenue_cents] += vehicle.price_cents.to_i
@@ -74,12 +74,13 @@ class User::AnalyticsController < ApplicationController
     end
 
     sold_this_month = sold_listings.count do |vehicle|
-      vehicle.vehicle_listing&.updated_at&.between?(Date.current.beginning_of_month, Time.current)
+      sold_on = listing_reference_date(vehicle.vehicle_listing)
+      sold_on.present? && sold_on >= Date.current.beginning_of_month
     end
 
     revenue_today_cents = sold_by_day[Date.current][:revenue_cents]
     revenue_last_30_days_cents = sold_listings.sum do |vehicle|
-      sold_on = vehicle.vehicle_listing&.updated_at&.to_date
+      sold_on = listing_reference_date(vehicle.vehicle_listing)
       next 0 if sold_on.blank? || sold_on < 30.days.ago.to_date
 
       vehicle.price_cents.to_i
@@ -139,6 +140,10 @@ class User::AnalyticsController < ApplicationController
       "6m" => "6 months",
       "12m" => "12 months"
     }.fetch(key, key)
+  end
+
+  def listing_reference_date(listing)
+    listing&.expires_at&.to_date || listing&.published_at&.to_date
   end
 
   def analytics_plans
