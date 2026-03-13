@@ -1,0 +1,13 @@
+<% css_class = if negotiation.vehicle_listing&.sold_visible?
+  "status-sold"
+elsif negotiation.pending?
+  "status-pending"
+elsif negotiation.accepted?
+  "status-accepted"
+else
+  "status-rejected"
+end %>
+
+<span class="deal-status <%= css_class %>">
+  <%= negotiation.vehicle_listing&.sold_visible? ? "Sold" : negotiation.status.humanize %>
+</span>

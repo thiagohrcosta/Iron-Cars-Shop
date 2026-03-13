@@ -1,0 +1,64 @@
+<% if selected_negotiation %>
+  <% counterpart = selected_negotiation.counterpart_for(current_user) %>
+  <% vehicle = selected_negotiation.vehicle %>
+
+  <div class="inbox-chat-shell" data-controller="chat">
+    <div class="chat-topbar">
+      <div class="chat-contact-block">
+        <div class="chat-contact-avatar">
+          <% if counterpart&.photo&.attached? %>
+            <%= image_tag counterpart.photo, alt: counterpart.full_name %>
+          <% else %>
+            <%= image_tag(vehicle&.photos&.attached? ? url_for(vehicle.photos.first) : "carbanner.png", alt: counterpart&.full_name || "Contact") %>
+          <% end %>
+        </div>
+        <div>
+          <h2><%= counterpart&.full_name.presence || counterpart&.email || "Conversation" %></h2>
+          <p><%= selected_negotiation.vehicle&.full_name || "Vehicle ##{selected_negotiation.vehicle_id}" %></p>
+        </div>
+      </div>
+
+      <div class="chat-topbar-side">
+        <div id="negotiation_<%= selected_negotiation.id %>_status_badge">
+          <%= render "user/negotiations/status_badge", negotiation: selected_negotiation %>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-body-grid">
+      <div class="chat-column-main">
+        <%= turbo_stream_from selected_negotiation, :messages, current_user.id %>
+        <%= turbo_stream_from selected_negotiation, :meta, current_user.id %>
+
+        <div id="negotiation_<%= selected_negotiation.id %>_messages" class="chat-messages" data-chat-target="messages">
+          <%= render partial: "user/negotiation_messages/message", collection: messages, as: :message, locals: { current_user_id: current_user.id } %>
+        </div>
+
+        <div id="negotiation_<%= selected_negotiation.id %>_new_message_form" class="chat-form-wrap">
+          <%= render "user/negotiation_messages/form", negotiation: selected_negotiation, message: message %>
+        </div>
+      </div>
+
+      <aside class="chat-column-side">
+        <article class="vehicle-topic-card">
+          <%= image_tag(vehicle&.photos&.attached? ? url_for(vehicle.photos.first) : "carbanner.png", alt: vehicle&.full_name || "Vehicle") %>
+          <div class="vehicle-topic-copy">
+            <h3><%= vehicle&.full_name || "Vehicle ##{selected_negotiation.vehicle_id}" %></h3>
+            <p><%= number_with_delimiter(vehicle&.mileage || 0) %> miles · <%= vehicle&.transmission.to_s.humanize %> · <%= vehicle&.fuel_type.to_s.humanize %></p>
+            <strong><%= number_to_currency((selected_negotiation.listed_price_cents || 0) / 100.0, precision: 0) %></strong>
+          </div>
+        </article>
+
+        <div id="negotiation_<%= selected_negotiation.id %>_offer_panel">
+          <%= render "user/negotiations/offer_panel", negotiation: selected_negotiation, current_user_id: current_user.id %>
+        </div>
+      </aside>
+    </div>
+  </div>
+<% else %>
+  <div class="chat-empty-state">
+    <h2>No conversations yet</h2>
+    <p>Start a negotiation from a vehicle page to open a live chat here.</p>
+    <%= link_to "Explore Marketplace", cars_path, class: "negotiations-cta" %>
+  </div>
+<% end %>

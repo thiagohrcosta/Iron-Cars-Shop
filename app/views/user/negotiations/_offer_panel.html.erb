@@ -1,0 +1,74 @@
+<% listed_price = negotiation.listed_price_cents || 0 %>
+<% seller_view = negotiation.seller_id == current_user_id %>
+<% buyer_view = negotiation.buyer_id == current_user_id %>
+<% remaining_attempts = negotiation.remaining_offer_attempts %>
+
+<div class="offer-panel-card">
+  <% if negotiation.vehicle_listing&.sold_visible? %>
+    <div class="offer-panel-state sold-state">
+      <strong>Vehicle sold</strong>
+      <p>This listing is marked as sold and will remain visible for 30 days.</p>
+    </div>
+  <% elsif negotiation.accepted? %>
+    <div class="offer-panel-state success-state">
+      <strong>Offer accepted</strong>
+      <p>The negotiation was accepted for <%= number_to_currency((negotiation.price_cents || 0) / 100.0, precision: 0) %>.</p>
+    </div>
+  <% elsif seller_view && negotiation.rejected? %>
+    <div class="offer-panel-state danger-state">
+      <strong>Offer rejected</strong>
+      <% if remaining_attempts.positive? %>
+        <p>The latest offer was rejected. The buyer still has <%= remaining_attempts %> more <%= remaining_attempts == 1 ? "attempt" : "attempts" %>.</p>
+      <% else %>
+        <p>The seller rejected the latest offer and the negotiation is now closed.</p>
+      <% end %>
+    </div>
+  <% elsif seller_view && negotiation.offer_active? %>
+    <div class="offer-panel-state pending-state">
+      <div>
+        <strong>New offer received</strong>
+        <p>The buyer offered <%= number_to_currency((negotiation.price_cents || 0) / 100.0, precision: 0) %>. Listed price: <%= number_to_currency(listed_price / 100.0, precision: 0) %>.</p>
+      </div>
+      <div class="offer-panel-actions">
+        <%= button_to "Accept", accept_offer_user_negotiation_path(negotiation), method: :patch, class: "offer-action-btn accept" %>
+        <%= button_to "Reject", reject_offer_user_negotiation_path(negotiation), method: :patch, class: "offer-action-btn reject" %>
+      </div>
+    </div>
+  <% elsif seller_view %>
+    <div class="offer-panel-state neutral-state">
+      <strong>Waiting for buyer</strong>
+      <p>No formal offer yet. Use the chat to continue the conversation.</p>
+    </div>
+  <% elsif negotiation.offer_active? %>
+    <div class="offer-panel-state pending-state">
+      <strong>Offer under review</strong>
+      <p>Your offer of <%= number_to_currency((negotiation.price_cents || 0) / 100.0, precision: 0) %> is awaiting the seller's decision.</p>
+    </div>
+  <% elsif buyer_view && negotiation.remaining_offer_attempts.positive? && !negotiation.accepted? %>
+    <div class="offer-panel-state neutral-state offer-form-state">
+      <div>
+        <strong><%= negotiation.rejected? ? "Try a new offer" : "Ready to buy?" %></strong>
+        <p>
+          <% if negotiation.rejected? %>
+            The latest offer was rejected. You still have <%= remaining_attempts %> more <%= remaining_attempts == 1 ? "attempt" : "attempts" %>.
+          <% else %>
+            Submit your best offer. You still have <%= remaining_attempts %> <%= remaining_attempts == 1 ? "attempt" : "attempts" %> available.
+          <% end %>
+        </p>
+      </div>
+      <%= form_with url: make_offer_user_negotiation_path(negotiation), method: :post, class: "offer-form" do |f| %>
+        <%= f.number_field :offer_price,
+            value: ((negotiation.price_cents || listed_price) / 100.0),
+            min: 1,
+            step: 100,
+            class: "offer-price-input" %>
+        <%= f.submit "FAZER OFERTA", class: "offer-submit-btn" %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="offer-panel-state danger-state">
+      <strong>Negotiation closed</strong>
+      <p>The maximum number of offers has been reached.</p>
+    </div>
+  <% end %>
+</div>

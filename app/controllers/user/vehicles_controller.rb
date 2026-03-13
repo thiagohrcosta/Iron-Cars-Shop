@@ -4,7 +4,11 @@ class User::VehiclesController < ApplicationController
   before_action :set_form_options, only: [ :new, :create ]
 
   def index
-    @vehicles = current_user.vehicles.includes(car_model: :brand).order(created_at: :desc)
+    @vehicles = current_user.vehicles
+      .left_outer_joins(:vehicle_listing)
+      .includes(:vehicle_listing, car_model: :brand)
+      .where("veihcle_listings.id IS NULL OR veihcle_listings.status != ? OR veihcle_listings.expires_at >= ?", "sold", Time.current)
+      .order(created_at: :desc)
   end
 
   def new
@@ -27,9 +31,9 @@ class User::VehiclesController < ApplicationController
 
   def publish
     @vehicle = current_user.vehicles.find(params[:id])
-    listing = @vehicle.veihcle_listing || @vehicle.build_veihcle_listing(seller: current_user)
-    
-    if listing.update(status: 'published', published_at: Time.current)
+    listing = @vehicle.vehicle_listing || @vehicle.build_vehicle_listing(seller: current_user)
+
+    if listing.update(status: "published", published_at: Time.current)
       redirect_to request.referer || user_vehicles_path, notice: "Vehicle successfully listed on the marketplace!"
     else
       redirect_to request.referer || user_vehicles_path, alert: "Could not list the vehicle."

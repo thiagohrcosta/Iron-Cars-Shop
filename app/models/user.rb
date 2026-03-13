@@ -6,6 +6,9 @@ class User < ApplicationRecord
 
   has_one_attached :photo
   has_many :vehicles, dependent: :destroy
+  has_many :negotiations_as_buyer, class_name: "Negotiation", foreign_key: "buyer_id", dependent: :destroy
+  has_many :negotiations_as_seller, class_name: "Negotiation", foreign_key: "seller_id", dependent: :destroy
+  has_many :negotiation_messages, dependent: :destroy
 
   validates :full_name,
             :document_id,

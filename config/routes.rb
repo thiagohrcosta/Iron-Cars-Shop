@@ -18,6 +18,15 @@ Rails.application.routes.draw do
         post :publish
       end
     end
+    resources :negotiations, only: [ :index, :show, :create ] do
+      member do
+        post :make_offer
+        patch :accept_offer
+        patch :reject_offer
+      end
+
+      resources :messages, only: :create, controller: "negotiation_messages"
+    end
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

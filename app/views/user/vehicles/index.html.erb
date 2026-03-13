@@ -28,7 +28,9 @@
 
               <div class="text-right flex flex-col items-end gap-1">
                 <p class="font-bold text-slate-900 text-lg"><%= number_to_currency(vehicle.price || 0) %></p>
-                <% if vehicle.veihcle_listing&.published? %>
+                <% if vehicle.vehicle_listing&.sold_visible? %>
+                  <span class="text-red-700 text-xs font-semibold bg-red-100 rounded px-2 py-1">SOLD</span>
+                <% elsif vehicle.vehicle_listing&.published? %>
                   <span class="text-slate-400 text-xs font-semibold bg-slate-100 rounded px-2 py-1">Listed</span>
                 <% else %>
                   <%= link_to "List to Marketplace", publish_user_vehicle_path(vehicle), data: { turbo_method: :post, turbo_confirm: "Are you sure you want to list this vehicle on the marketplace?" }, class: "text-green-600 font-semibold text-sm hover:underline" %>

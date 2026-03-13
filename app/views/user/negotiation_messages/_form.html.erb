@@ -1,0 +1,13 @@
+<%= form_with model: [ :user, negotiation, message ],
+    url: user_negotiation_messages_path(negotiation),
+    class: "chat-input-bar",
+    data: { action: "turbo:submit-end->chat#onSubmitEnd" } do |f| %>
+  <%= f.text_area :content,
+      rows: 1,
+      required: true,
+      maxlength: 2000,
+      placeholder: "Write a message...",
+  class: "chat-input",
+  data: { chat_target: "input" } %>
+  <%= f.submit "Send", class: "chat-send-btn" %>
+<% end %>

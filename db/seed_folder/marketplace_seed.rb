@@ -12,7 +12,7 @@ raise "No car models found. Run car_model_seed first." if CarModel.count.zero?
 
 puts "Preparing marketplace seed (users=#{users_target}, vehicles=#{vehicles_target}, batch=#{batch_size})..."
 
-VeihcleListing.delete_all
+VehicleListing.delete_all
 Vehicle.delete_all
 
 admin = User.find_by(role: :admin) || User.first
@@ -27,7 +27,7 @@ if users_to_create.positive?
   now = Time.current
   user_rows = []
 
-  # Bcrypt is intentionally slow by design. 
+  # Bcrypt is intentionally slow by design.
   # Hashing "12345678" 12,000 times sequentially halts the computer. We digest it once and reuse it across all seed users!
   default_password_hash = Devise::Encryptor.digest(User, "12345678")
 
@@ -154,7 +154,7 @@ while created < vehicles_target
     end
   end
 
-  VeihcleListing.insert_all!(listing_rows)
+  VehicleListing.insert_all!(listing_rows)
 
   vin_counter += chunk
   created += chunk
@@ -162,4 +162,4 @@ while created < vehicles_target
   puts "  => Inserted #{created}/#{vehicles_target} vehicles and listings (#{pct}%)"
 end
 
-puts "Marketplace seed completed: users=#{User.count}, vehicles=#{Vehicle.count}, listings=#{VeihcleListing.count}"
+puts "Marketplace seed completed: users=#{User.count}, vehicles=#{Vehicle.count}, listings=#{VehicleListing.count}"

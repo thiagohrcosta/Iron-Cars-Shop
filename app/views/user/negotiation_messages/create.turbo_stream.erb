@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "negotiation_#{@negotiation.id}_new_message_form" do %>
+  <%= render "user/negotiation_messages/form", negotiation: @negotiation, message: @message %>
+<% end %>
