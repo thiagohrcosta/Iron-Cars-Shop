@@ -1,0 +1,34 @@
+<section class="negotiations-page inbox-page">
+  <div class="negotiations-wrap wide">
+    <header class="inbox-header-bar">
+      <div>
+        <p class="eyebrow">User Area</p>
+        <h1>Messages</h1>
+        <p class="subtitle">Conversations grouped by each negotiation topic.</p>
+      </div>
+    </header>
+
+    <div class="messages-workspace">
+      <aside class="conversation-rail">
+        <div class="conversation-rail-header">
+          <h2>Conversations</h2>
+          <input type="text" placeholder="Search..." disabled>
+        </div>
+
+        <div class="conversation-list">
+          <% if @negotiations.any? %>
+            <% @negotiations.each do |negotiation| %>
+              <%= render "user/negotiations/conversation_item", negotiation: negotiation, selected_negotiation: @selected_negotiation, current_user: current_user %>
+            <% end %>
+          <% else %>
+            <div class="conversation-empty-list">No active topics yet.</div>
+          <% end %>
+        </div>
+      </aside>
+
+      <div class="conversation-stage">
+        <%= render "user/negotiations/chat_panel", selected_negotiation: @selected_negotiation, messages: @messages, message: @message %>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,6 +1,6 @@
-class CreateVeihcleListings < ActiveRecord::Migration[8.0]
+class CreateVehicleListings < ActiveRecord::Migration[8.0]
   def change
-    create_table :veihcle_listings do |t|
+    create_table :vehicle_listings do |t|
       t.references :vehicle, null: false, foreign_key: true
       t.references :seller, null: false, foreign_key: { to_table: :users }
       t.string :status, null: false, default: "draft"

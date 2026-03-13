@@ -1,0 +1,861 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800;900&display=swap');
+
+.negotiations-page {
+  min-height: 100vh;
+  padding: 2rem 0 3rem;
+  background: radial-gradient(circle at top center, #f8fbff 0%, #dfe8f4 100%);
+  font-family: 'Roboto', sans-serif;
+  color: #1e365f;
+}
+
+.negotiations-wrap {
+  width: min(1100px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.negotiations-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.negotiations-header .eyebrow {
+  color: #3d5f95;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  font-weight: 800;
+  margin-bottom: 0.4rem;
+}
+
+.negotiations-header h1 {
+  font-size: clamp(2rem, 4.2vw, 3rem);
+  letter-spacing: -0.03em;
+  font-weight: 900;
+  line-height: 1;
+  color: #172c4d;
+}
+
+.negotiations-header .subtitle {
+  margin-top: 0.5rem;
+  color: #5b6f8d;
+  font-weight: 500;
+}
+
+.negotiations-cta {
+  display: inline-block;
+  border: 0;
+  border-radius: 12px;
+  padding: 0.7rem 1.1rem;
+  background: linear-gradient(135deg, #2f7bf2, #195fc9);
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(31, 86, 177, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.negotiations-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(31, 86, 177, 0.32);
+}
+
+.negotiations-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.25rem 0 1.6rem;
+}
+
+.negotiations-stats article {
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(10, 29, 65, 0.07), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.negotiations-stats p {
+  color: #5d7291;
+  font-size: 0.88rem;
+  margin-bottom: 0.3rem;
+}
+
+.negotiations-stats strong {
+  color: #12386c;
+  font-weight: 900;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.negotiations-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.negotiation-card {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 24px rgba(15, 39, 80, 0.08);
+  overflow: hidden;
+}
+
+.car-preview img {
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+  object-fit: cover;
+}
+
+.deal-content {
+  padding: 1rem 1rem 1rem 0;
+}
+
+.deal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.deal-role {
+  color: #4f6485;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.deal-status {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.28rem 0.7rem;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.status-pending {
+  color: #7a5400;
+  background: #fff2cc;
+}
+
+.status-accepted {
+  color: #0c703f;
+  background: #d7f5e3;
+}
+
+.status-rejected {
+  color: #a22a2a;
+  background: #fce0e0;
+}
+
+.deal-content h2 {
+  color: #163360;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.deal-meta {
+  margin-top: 0.3rem;
+  color: #6a7e9b;
+  font-size: 0.92rem;
+}
+
+.deal-grid {
+  margin-top: 0.85rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.deal-grid div {
+  background: linear-gradient(180deg, #ffffff 0%, #f2f6fc 100%);
+  border: 1px solid #e3ebf6;
+  border-radius: 10px;
+  padding: 0.6rem 0.7rem;
+}
+
+.deal-grid span {
+  display: block;
+  color: #6a7e9b;
+  font-size: 0.78rem;
+  margin-bottom: 0.2rem;
+}
+
+.deal-grid strong {
+  color: #1b3968;
+  font-size: 0.96rem;
+  font-weight: 800;
+}
+
+.deal-actions {
+  margin-top: 0.85rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.deal-chat-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #2f7bf2, #195fc9);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-decoration: none;
+  padding: 0.55rem 0.95rem;
+  box-shadow: 0 8px 16px rgba(31, 86, 177, 0.2);
+}
+
+.chat-shell {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(10, 29, 65, 0.09);
+  overflow: hidden;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid #dde6f4;
+  background: linear-gradient(180deg, #ffffff 0%, #f3f7fd 100%);
+}
+
+.chat-header-main {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.chat-header-main img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.chat-header-main h1 {
+  color: #172c4d;
+  font-size: clamp(1.3rem, 3.2vw, 1.9rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.chat-header-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: flex-end;
+}
+
+.chat-back-btn {
+  text-decoration: none;
+  color: #1f5cb8;
+  font-weight: 700;
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 0.45rem;
+  padding: 1rem;
+  min-height: 0;
+  height: 100%;
+  max-height: none;
+  overflow-y: auto;
+  background: linear-gradient(180deg, #edf3fb 0%, #e6effb 100%);
+}
+
+.chat-bubble-row {
+  display: flex;
+}
+
+.chat-bubble-row.mine {
+  justify-content: flex-end;
+}
+
+.chat-bubble-row.theirs {
+  justify-content: flex-start;
+}
+
+.chat-bubble {
+  max-width: min(78%, 560px);
+  border-radius: 14px;
+  padding: 0.55rem 0.75rem;
+  box-shadow: 0 5px 15px rgba(14, 38, 82, 0.08);
+}
+
+.chat-bubble-row.mine .chat-bubble {
+  background: linear-gradient(135deg, #2f7bf2, #1f62c9);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble-row.theirs .chat-bubble {
+  background: #ffffff;
+  color: #203b67;
+  border: 1px solid #d9e4f4;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-author {
+  font-size: 0.72rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+  opacity: 0.9;
+}
+
+.chat-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.chat-time {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.7rem;
+  text-align: right;
+  opacity: 0.85;
+}
+
+.chat-form-wrap {
+  padding: 0.85rem;
+  border-top: 1px solid #dbe5f3;
+  background: #f8fbff;
+}
+
+.chat-input-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  align-items: end;
+}
+
+.chat-input {
+  border: 1px solid #c7d7ee;
+  border-radius: 12px;
+  padding: 0.65rem 0.75rem;
+  color: #1d3964;
+  background: #fff;
+  resize: vertical;
+  min-height: 52px;
+  max-height: 160px;
+}
+
+.chat-send-btn {
+  border: 0;
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  background: linear-gradient(135deg, #2f7bf2, #195fc9);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.negotiations-empty {
+  border: 1px dashed #9fb2d3;
+  border-radius: 16px;
+  padding: 2.2rem 1.2rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.negotiations-empty h2 {
+  color: #1a3054;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.negotiations-empty p {
+  color: #5f7392;
+  margin: 0.65rem 0 1rem;
+}
+
+@media (max-width: 920px) {
+  .negotiations-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .negotiation-card {
+    grid-template-columns: 1fr;
+  }
+
+  .car-preview img {
+    min-height: 200px;
+    max-height: 260px;
+  }
+
+  .deal-content {
+    padding: 0 1rem 1rem;
+  }
+
+  .chat-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chat-header-actions {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 640px) {
+  .negotiations-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .negotiations-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .deal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-input-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-send-btn {
+    width: 100%;
+  }
+}
+
+.negotiations-wrap.wide {
+  width: min(1380px, calc(100% - 1.5rem));
+}
+
+.inbox-page {
+  padding-top: 1.2rem;
+}
+
+.inbox-header-bar {
+  margin-bottom: 1rem;
+}
+
+.messages-workspace {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 1rem;
+  min-height: calc(100vh - 150px);
+  height: calc(100vh - 150px);
+}
+
+.conversation-rail,
+.conversation-stage,
+.inbox-chat-shell {
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.74);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 28px rgba(14, 38, 82, 0.08);
+}
+
+.conversation-rail {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.conversation-rail-header {
+  padding: 1.1rem;
+  background: linear-gradient(180deg, #17305d 0%, #13284f 100%);
+}
+
+.conversation-rail-header h2 {
+  color: #fff;
+  font-size: 1.55rem;
+  font-weight: 800;
+}
+
+.conversation-rail-header input {
+  width: 100%;
+  margin-top: 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.95);
+  color: #23406e;
+  padding: 0.7rem 0.85rem;
+}
+
+.conversation-list {
+  padding: 0.6rem;
+  display: grid;
+  gap: 0.55rem;
+  overflow-y: auto;
+}
+
+.conversation-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+  text-decoration: none;
+  border: 1px solid #e2e9f4;
+  border-radius: 16px;
+  padding: 0.7rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f6f9fd 100%);
+}
+
+.conversation-item.active {
+  border-color: #8fb1eb;
+  box-shadow: 0 8px 20px rgba(47, 123, 242, 0.16);
+}
+
+.conversation-avatar img {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.conversation-title-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+
+.conversation-title-row strong {
+  color: #1b3155;
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+.conversation-title-row span,
+.conversation-vehicle,
+.conversation-preview,
+.conversation-empty-list {
+  color: #607492;
+}
+
+.conversation-title-row span {
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.conversation-vehicle {
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-top: 0.08rem;
+}
+
+.conversation-preview {
+  font-size: 0.8rem;
+  margin-top: 0.18rem;
+}
+
+.conversation-flag {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.7rem;
+  border-radius: 999px;
+  padding: 0.18rem 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.conversation-flag.sold,
+.status-sold {
+  color: #a11d2d;
+  background: #ffd8dd;
+}
+
+.conversation-flag.offer {
+  color: #7a5400;
+  background: #fff0bd;
+}
+
+.conversation-stage {
+  padding: 0.8rem;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.inbox-chat-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.chat-topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid #dbe5f3;
+  background: linear-gradient(180deg, #ffffff 0%, #f5f8fd 100%);
+}
+
+.chat-contact-block {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.chat-contact-avatar img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.chat-contact-block h2 {
+  color: #1b3155;
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.chat-contact-block p {
+  color: #647899;
+  font-weight: 600;
+}
+
+.chat-body-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 290px;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.chat-column-main {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.chat-column-side {
+  border-left: 1px solid #dbe5f3;
+  background: linear-gradient(180deg, #fbfdff 0%, #f3f7fc 100%);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.vehicle-topic-card {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid #dce6f5;
+  background: #fff;
+  box-shadow: 0 12px 24px rgba(15, 39, 80, 0.06);
+}
+
+.vehicle-topic-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.vehicle-topic-copy {
+  padding: 0.95rem;
+}
+
+.vehicle-topic-copy h3 {
+  color: #1d345b;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.vehicle-topic-copy p {
+  color: #657995;
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+.vehicle-topic-copy strong {
+  display: block;
+  margin-top: 0.6rem;
+  color: #114184;
+  font-size: 1.9rem;
+  font-weight: 900;
+}
+
+.offer-panel-card {
+  border-radius: 18px;
+  border: 1px solid #dae5f5;
+  background: #fff;
+  padding: 1rem;
+}
+
+.offer-panel-state strong {
+  display: block;
+  color: #1a3156;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.offer-panel-state p {
+  color: #667a97;
+  font-size: 0.9rem;
+  margin-top: 0.35rem;
+}
+
+.offer-panel-state.pending-state,
+.offer-panel-state.neutral-state,
+.offer-panel-state.success-state,
+.offer-panel-state.danger-state,
+.offer-panel-state.sold-state {
+  border-radius: 14px;
+  padding: 0.9rem;
+}
+
+.offer-panel-state.pending-state {
+  background: #fff7d7;
+}
+
+.offer-panel-state.neutral-state {
+  background: #eef4fc;
+}
+
+.offer-panel-state.success-state {
+  background: #def5e5;
+}
+
+.offer-panel-state.danger-state {
+  background: #fce2e2;
+}
+
+.offer-panel-state.sold-state {
+  background: #ffe1e5;
+}
+
+.offer-panel-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  margin-top: 0.85rem;
+}
+
+.offer-action-btn,
+.offer-submit-btn {
+  border: 0;
+  border-radius: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.offer-action-btn {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+}
+
+.offer-action-btn.accept {
+  background: linear-gradient(135deg, #16824b, #0d6a3c);
+  color: #fff;
+}
+
+.offer-action-btn.reject {
+  background: #fff;
+  color: #a02a2a;
+  border: 1px solid #edb3b3;
+}
+
+.offer-form-state {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.offer-form {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.offer-price-input {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #c5d5ed;
+  padding: 0.7rem 0.8rem;
+  color: #1c3863;
+}
+
+.offer-submit-btn {
+  width: 100%;
+  padding: 0.82rem 1rem;
+  background: linear-gradient(135deg, #2f7bf2, #195fc9);
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.chat-empty-state {
+  height: 100%;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 0.7rem;
+}
+
+.chat-empty-state h2 {
+  color: #1a3054;
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.chat-empty-state p {
+  color: #627795;
+}
+
+@media (max-width: 1180px) {
+  .messages-workspace,
+  .chat-body-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-column-side {
+    border-left: 0;
+    border-top: 1px solid #dbe5f3;
+  }
+}
+
+@media (max-width: 820px) {
+  .messages-workspace {
+    gap: 0.8rem;
+  }
+
+  .chat-topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chat-contact-block h2 {
+    font-size: 1.45rem;
+  }
+}

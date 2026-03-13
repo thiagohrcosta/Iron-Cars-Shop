@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_22_212306) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_11_213214) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -69,6 +69,35 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_22_212306) do
     t.datetime "updated_at", null: false
     t.index ["brand_id"], name: "index_car_models_on_brand_id"
     t.index ["user_id"], name: "index_car_models_on_user_id"
+  end
+
+  create_table "negotiation_messages", force: :cascade do |t|
+    t.bigint "negotiation_id", null: false
+    t.bigint "user_id", null: false
+    t.text "content", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["negotiation_id"], name: "index_negotiation_messages_on_negotiation_id"
+    t.index ["user_id"], name: "index_negotiation_messages_on_user_id"
+  end
+
+  create_table "negotiations", force: :cascade do |t|
+    t.decimal "price_cents", precision: 10, scale: 2, null: false
+    t.string "status", default: "pending", null: false
+    t.boolean "accepted_by_seller", default: false
+    t.boolean "accepted_by_buyer", default: false
+    t.datetime "accepted_at"
+    t.datetime "rejected_at"
+    t.bigint "seller_id", null: false
+    t.bigint "buyer_id", null: false
+    t.bigint "vehicle_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "vehicle_listing_id", null: false
+    t.index ["buyer_id"], name: "index_negotiations_on_buyer_id"
+    t.index ["seller_id"], name: "index_negotiations_on_seller_id"
+    t.index ["vehicle_id"], name: "index_negotiations_on_vehicle_id"
+    t.index ["vehicle_listing_id"], name: "index_negotiations_on_vehicle_listing_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -160,6 +189,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_22_212306) do
   add_foreign_key "brands", "users"
   add_foreign_key "car_models", "brands"
   add_foreign_key "car_models", "users"
+  add_foreign_key "negotiation_messages", "negotiations"
+  add_foreign_key "negotiation_messages", "users"
+  add_foreign_key "negotiations", "users", column: "buyer_id"
+  add_foreign_key "negotiations", "users", column: "seller_id"
+  add_foreign_key "negotiations", "vehicles"
+  add_foreign_key "negotiations", "veihcle_listings", column: "vehicle_listing_id"
   add_foreign_key "vehicle_features", "vehicles"
   add_foreign_key "vehicles", "car_models"
   add_foreign_key "vehicles", "users"

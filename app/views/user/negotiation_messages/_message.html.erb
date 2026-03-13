@@ -1,0 +1,9 @@
+<% mine = message.user_id == current_user_id %>
+
+<div class="chat-bubble-row <%= mine ? "mine" : "theirs" %>">
+  <div class="chat-bubble">
+    <p class="chat-author"><%= mine ? "You" : (message.user.full_name.presence || message.user.email) %></p>
+    <div class="chat-text"><%= simple_format(h(message.content), {}, wrapper_tag: "span") %></div>
+    <time class="chat-time"><%= l(message.created_at, format: :short) %></time>
+  </div>
+</div>

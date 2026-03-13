@@ -1,0 +1,29 @@
+<% counterpart = negotiation.counterpart_for(current_user) %>
+<% last_message = negotiation.negotiation_messages.max_by(&:created_at) %>
+<% vehicle = negotiation.vehicle %>
+<% active = local_assigns[:selected_negotiation]&.id == negotiation.id %>
+
+<%= link_to user_negotiation_path(negotiation), class: "conversation-item #{'active' if active}" do %>
+  <div class="conversation-avatar">
+    <% if counterpart&.photo&.attached? %>
+      <%= image_tag counterpart.photo, alt: counterpart.full_name %>
+    <% else %>
+      <%= image_tag(vehicle&.photos&.attached? ? url_for(vehicle.photos.first) : "carbanner.png", alt: counterpart&.full_name || "Contact") %>
+    <% end %>
+  </div>
+
+  <div class="conversation-copy">
+    <div class="conversation-title-row">
+      <strong><%= counterpart&.full_name.presence || counterpart&.email || "User" %></strong>
+      <span><%= l((last_message || negotiation).created_at, format: :short) %></span>
+    </div>
+    <p class="conversation-vehicle"><%= vehicle&.full_name || "Vehicle ##{negotiation.vehicle_id}" %></p>
+    <p class="conversation-preview"><%= truncate(last_message&.content || "Vehicle information shared.", length: 58) %></p>
+  </div>
+
+  <% if negotiation.vehicle_listing&.sold_visible? %>
+    <span class="conversation-flag sold">Sold</span>
+  <% elsif negotiation.offer_active? && negotiation.seller?(current_user) %>
+    <span class="conversation-flag offer">Offer</span>
+  <% end %>
+<% end %>
