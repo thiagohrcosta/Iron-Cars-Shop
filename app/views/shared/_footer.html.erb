@@ -1,0 +1,52 @@
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__brand">
+      <%= image_tag "logo.png", alt: "Iron Cars Shop", class: "site-footer__logo" %>
+      <p>Automotive marketplace with curated listings, direct negotiation, and a buying and selling flow built for confidence.</p>
+      <div class="site-footer__metrics">
+        <span>120,000+ active listings</span>
+        <span>Serving the U.S. and Canada</span>
+      </div>
+    </div>
+
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li><%= link_to "Buy", cars_path %></li>
+        <li><%= link_to "Sell", cars_path %></li>
+        <li><%= link_to "Home", root_path %></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>Account</h3>
+      <ul>
+        <% if user_signed_in? %>
+          <li><%= link_to "My dashboard", user_dashboard_path %></li>
+        <% else %>
+          <li><%= link_to "Sign in", new_user_session_path %></li>
+        <% end %>
+        <li><%= link_to "List your car", cars_path %></li>
+        <li><a href="mailto:support@ironcars.com">support@ironcars.com</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>Contact</h3>
+      <ul>
+        <li><a href="tel:+18005550199">+1 (800) 555-0199</a></li>
+        <li>Mon to Fri, 9am to 6pm EST</li>
+        <li>New York, NY</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="site-footer__bottom">
+    <p>© <%= Date.current.year %> Iron Cars Shop. All rights reserved.</p>
+    <div class="site-footer__bottom-links">
+      <a href="mailto:support@ironcars.com">Support</a>
+      <a href="mailto:support@ironcars.com">Privacy</a>
+      <a href="mailto:support@ironcars.com">Terms</a>
+    </div>
+  </div>
+</footer>

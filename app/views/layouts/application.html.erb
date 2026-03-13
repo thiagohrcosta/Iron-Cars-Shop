@@ -20,6 +20,9 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag :application, "data-turbo-track": "reload" %>
+
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+
     <%= javascript_importmap_tags %>
   </head>
 
@@ -27,6 +30,7 @@
     <main class="mx-auto">
       <%= render "shared/navbar" if ["pages", "cars"].include?(controller_name) %>
       <%= yield %>
+      <%= render "shared/footer" %>
     </main>
   </body>
 </html>
