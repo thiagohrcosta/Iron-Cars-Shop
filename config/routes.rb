@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       end
     end
     get "analytics", to: "analytics#show"
+    get "analytics/data", to: "analytics#data"
     post "billing/checkout", to: "billing#create_checkout_session", as: :billing_checkout
 
     resources :negotiations, only: [ :index, :show, :create ] do

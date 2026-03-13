@@ -29,6 +29,14 @@
       </div>
     </header>
 
+    <%= tag.div id: "analytics-dataset",
+      data: {
+        selected_range: @selected_range,
+        revenue_series: json_escape(@revenue_series.to_json),
+        daily_sales_series: json_escape(@daily_sales_series.to_json)
+      },
+      hidden: true %>
+
     <%# ── TOP KPI ROW ─────────────────────────────────────────────── %>
     <div class="ad-kpi-row">
       <div class="ad-kpi-card">
@@ -37,8 +45,8 @@
         </div>
         <div>
           <p class="ad-kpi-card__label">Revenue Today</p>
-          <p class="ad-kpi-card__value"><%= number_to_currency((@stats[:avg_ticket] * [@stats[:published_cars], 1].max).round) %></p>
-          <p class="ad-kpi-card__change ad-kpi-card__change--pos">+21.1%</p>
+          <p class="ad-kpi-card__value"><%= number_to_currency(@stats[:revenue_today]) %></p>
+          <p class="ad-kpi-card__change ad-kpi-card__change--pos"><%= number_to_currency(@stats[:revenue_last_30_days]) %> / 30 days</p>
         </div>
       </div>
       <div class="ad-kpi-card">
@@ -66,8 +74,8 @@
         </div>
         <div>
           <p class="ad-kpi-card__label">Conversion Rate</p>
-          <p class="ad-kpi-card__value">18.3%</p>
-          <p class="ad-kpi-card__change ad-kpi-card__change--pos">+3.7%</p>
+          <p class="ad-kpi-card__value"><%= number_with_precision(@stats[:conversion_rate], precision: 1) %>%</p>
+          <p class="ad-kpi-card__change ad-kpi-card__change--pos"><%= @stats[:selected_range_sales] %> sales in range</p>
         </div>
       </div>
       <div class="ad-kpi-card">
@@ -88,11 +96,9 @@
         <div class="ad-card__head">
           <h2>Revenue Analytics</h2>
           <div class="ad-tabs">
-            <button class="ad-tab">Today</button>
-            <button class="ad-tab">7 days</button>
-            <button class="ad-tab ad-tab--active">30 days</button>
-            <button class="ad-tab">90 days</button>
-            <button class="ad-tab">1 year</button>
+            <% @time_filters.each do |filter| %>
+              <%= link_to filter[:label], user_analytics_path(range: filter[:key]), class: "ad-tab #{"ad-tab--active" if filter[:active]}" %>
+            <% end %>
           </div>
         </div>
         <div class="ad-legend">
@@ -135,7 +141,7 @@
       <div class="ad-card">
         <div class="ad-card__head">
           <h2>Lead Sources</h2>
-          <span class="ad-card__total">Total <%= number_to_currency((@stats[:avg_ticket] * [@stats[:published_cars], 1].max * 5.8).round, precision: 0) %></span>
+          <span class="ad-card__total">Total <%= number_to_currency(@stats[:selected_range_revenue], precision: 0) %></span>
         </div>
         <div class="ad-donut-wrap">
           <div class="ad-donut" style="background: conic-gradient(#1d5fcc 0% 44%, #4d91f0 44% 69%, #7fb2f7 69% 87%, #b0d0fb 87% 97%, #dbeafe 97% 100%);">
@@ -160,7 +166,7 @@
       <div class="ad-card">
         <div class="ad-card__head">
           <h2>Sales Funnel</h2>
-          <span class="ad-card__meta">30 Days</span>
+          <span class="ad-card__meta"><%= @time_filters.find { |filter| filter[:active] }[:label] %></span>
         </div>
         <div class="ad-funnel">
           <% [
