@@ -18,6 +18,9 @@ Rails.application.routes.draw do
         post :publish
       end
     end
+    get "analytics", to: "analytics#show"
+    post "billing/checkout", to: "billing#create_checkout_session", as: :billing_checkout
+
     resources :negotiations, only: [ :index, :show, :create ] do
       member do
         post :make_offer
@@ -28,6 +31,9 @@ Rails.application.routes.draw do
       resources :messages, only: :create, controller: "negotiation_messages"
     end
   end
+
+  post "webhooks/stripe", to: "webhooks/stripe#create"
+  post "api/v1/webhooks/stripe", to: "webhooks/stripe#create"
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

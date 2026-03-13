@@ -11,7 +11,7 @@
     <a href="<%= user_vehicles_path %>" class="block px-4 py-2 rounded-lg hover:bg-slate-800 <%= 'bg-slate-800/80 font-semibold' if current_page?(user_vehicles_path) rescue false %>">My Listings</a>
     <a href="<%= user_negotiations_path %>" class="block px-4 py-2 rounded-lg hover:bg-slate-800 <%= 'bg-slate-800/80 font-semibold' if current_page?(user_negotiations_path) rescue false %>">Offers</a>
     <a href="<%= cars_path %>" class="block px-4 py-2 rounded-lg hover:bg-slate-800 <%= 'bg-slate-800/80 font-semibold' if current_page?(cars_path) rescue false %>">Sales</a>
-    <a href="#" class="block px-4 py-2 rounded-lg hover:bg-slate-800">Analytics</a>
+    <a href="<%= user_analytics_path %>" class="block px-4 py-2 rounded-lg hover:bg-slate-800 <%= 'bg-slate-800/80 font-semibold' if current_page?(user_analytics_path) rescue false %>">Analytics</a>
     <a href="#" class="block px-4 py-2 rounded-lg hover:bg-slate-800">Settings</a>
   </nav>
 

@@ -1,0 +1,322 @@
+<div class="analytics-page">
+  <%= render "shared/user_sidebar" %>
+
+  <div class="analytics-content">
+
+    <%# ── HEADER ─────────────────────────────────────────────────── %>
+    <header class="ad-header">
+      <h1 class="ad-header__title">Dashboard</h1>
+      <div class="ad-header__actions">
+        <button class="ad-icon-btn ad-icon-btn--badge" aria-label="Notifications">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="ad-badge">3</span>
+        </button>
+        <button class="ad-icon-btn" aria-label="Messages">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </button>
+        <div class="ad-profile">
+          <% if current_user.photo.attached? %>
+            <%= image_tag current_user.photo, class: "ad-avatar" %>
+          <% else %>
+            <span class="ad-avatar ad-avatar--placeholder"><%= current_user.full_name.first.upcase %></span>
+          <% end %>
+          <div>
+            <p class="ad-profile__name"><%= current_user.full_name %></p>
+            <p class="ad-profile__role"><%= current_user.active_subscription&.plan_label || "Subscriber" %></p>
+          </div>
+        </div>
+        <%= link_to "+ Sell Your Car", new_user_vehicle_path, class: "ad-sell-btn" %>
+      </div>
+    </header>
+
+    <%# ── TOP KPI ROW ─────────────────────────────────────────────── %>
+    <div class="ad-kpi-row">
+      <div class="ad-kpi-card">
+        <div class="ad-kpi-card__icon ad-kpi-card__icon--blue">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <div>
+          <p class="ad-kpi-card__label">Revenue Today</p>
+          <p class="ad-kpi-card__value"><%= number_to_currency((@stats[:avg_ticket] * [@stats[:published_cars], 1].max).round) %></p>
+          <p class="ad-kpi-card__change ad-kpi-card__change--pos">+21.1%</p>
+        </div>
+      </div>
+      <div class="ad-kpi-card">
+        <div class="ad-kpi-card__icon ad-kpi-card__icon--orange">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <div>
+          <p class="ad-kpi-card__label">Cars Sold This Month</p>
+          <p class="ad-kpi-card__value"><%= @stats[:sold_cars] %></p>
+        </div>
+      </div>
+      <div class="ad-kpi-card">
+        <div class="ad-kpi-card__icon ad-kpi-card__icon--teal">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div>
+          <p class="ad-kpi-card__label">Active Leads</p>
+          <p class="ad-kpi-card__value"><%= number_with_delimiter(@stats[:total_views]) %></p>
+          <p class="ad-kpi-card__change ad-kpi-card__change--pos">+19.3%</p>
+        </div>
+      </div>
+      <div class="ad-kpi-card">
+        <div class="ad-kpi-card__icon ad-kpi-card__icon--purple">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div>
+          <p class="ad-kpi-card__label">Conversion Rate</p>
+          <p class="ad-kpi-card__value">18.3%</p>
+          <p class="ad-kpi-card__change ad-kpi-card__change--pos">+3.7%</p>
+        </div>
+      </div>
+      <div class="ad-kpi-card">
+        <div class="ad-kpi-card__icon ad-kpi-card__icon--green">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <div>
+          <p class="ad-kpi-card__label">Average Deal Value</p>
+          <p class="ad-kpi-card__value"><%= number_to_currency(@stats[:avg_ticket]) %></p>
+          <p class="ad-kpi-card__change ad-kpi-card__change--pos">+5.2%</p>
+        </div>
+      </div>
+    </div>
+
+    <%# ── ROW 1: Revenue Chart + Lead Sources ─────────────────────── %>
+    <div class="ad-row">
+      <div class="ad-card ad-card--lg">
+        <div class="ad-card__head">
+          <h2>Revenue Analytics</h2>
+          <div class="ad-tabs">
+            <button class="ad-tab">Today</button>
+            <button class="ad-tab">7 days</button>
+            <button class="ad-tab ad-tab--active">30 days</button>
+            <button class="ad-tab">90 days</button>
+            <button class="ad-tab">1 year</button>
+          </div>
+        </div>
+        <div class="ad-legend">
+          <span class="ad-legend-dot ad-legend-dot--blue"></span> Revenue
+          <span class="ad-legend-dot ad-legend-dot--light" style="margin-left:.6rem"></span> Cars Sold
+        </div>
+        <div class="ad-chart-container">
+          <svg class="ad-chart-svg" viewBox="0 0 680 145" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2c78ec" stop-opacity="0.20"/>
+                <stop offset="100%" stop-color="#2c78ec" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <%# Horizontal gridlines %>
+            <line x1="38" y1="10"  x2="680" y2="10"  stroke="#f0f4fb" stroke-width="1"/>
+            <line x1="38" y1="45"  x2="680" y2="45"  stroke="#f0f4fb" stroke-width="1"/>
+            <line x1="38" y1="80"  x2="680" y2="80"  stroke="#f0f4fb" stroke-width="1"/>
+            <line x1="38" y1="115" x2="680" y2="115" stroke="#f0f4fb" stroke-width="1"/>
+            <%# Y-axis labels %>
+            <text x="0" y="14"  font-size="10" fill="#b0bcd8">75K</text>
+            <text x="0" y="49"  font-size="10" fill="#b0bcd8">55K</text>
+            <text x="0" y="84"  font-size="10" fill="#b0bcd8">25K</text>
+            <text x="2" y="128" font-size="10" fill="#b0bcd8">0</text>
+            <%# Area fill %>
+            <path d="M38,115 C90,110 130,100 185,82 C240,65 265,78 320,62 C375,46 400,28 455,18 C510,10 545,20 595,14 C635,10 658,11 680,8 L680,130 L38,130 Z" fill="url(#areaGrad)"/>
+            <%# Line %>
+            <path d="M38,115 C90,110 130,100 185,82 C240,65 265,78 320,62 C375,46 400,28 455,18 C510,10 545,20 595,14 C635,10 658,11 680,8" fill="none" stroke="#2c78ec" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+            <%# X-axis labels %>
+            <text x="70"  y="143" font-size="10" fill="#b0bcd8">Tue.</text>
+            <text x="165" y="143" font-size="10" fill="#b0bcd8">Wed.</text>
+            <text x="295" y="143" font-size="10" fill="#b0bcd8">Thu.</text>
+            <text x="410" y="143" font-size="10" fill="#b0bcd8">Mon.</text>
+            <text x="520" y="143" font-size="10" fill="#b0bcd8">Mon.</text>
+            <text x="630" y="143" font-size="10" fill="#b0bcd8">Mon.</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="ad-card">
+        <div class="ad-card__head">
+          <h2>Lead Sources</h2>
+          <span class="ad-card__total">Total <%= number_to_currency((@stats[:avg_ticket] * [@stats[:published_cars], 1].max * 5.8).round, precision: 0) %></span>
+        </div>
+        <div class="ad-donut-wrap">
+          <div class="ad-donut" style="background: conic-gradient(#1d5fcc 0% 44%, #4d91f0 44% 69%, #7fb2f7 69% 87%, #b0d0fb 87% 97%, #dbeafe 97% 100%);">
+            <div class="ad-donut__hole"></div>
+          </div>
+        </div>
+        <ul class="ad-source-list">
+          <% source_colors = %w[#1d5fcc #4d91f0 #7fb2f7 #b0d0fb #dbeafe] %>
+          <% @lead_sources.each_with_index do |source, idx| %>
+            <li>
+              <span class="ad-source-dot" style="background:<%= source_colors[idx % source_colors.size] %>"></span>
+              <span class="ad-source-name"><%= source[:name] %></span>
+              <span class="ad-source-pct"><%= source[:percent] %>% <span class="ad-up">▲</span></span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+
+    <%# ── ROW 2: Sales Funnel + Top Listings + CRM Pipeline ───────── %>
+    <div class="ad-row ad-row--3">
+      <div class="ad-card">
+        <div class="ad-card__head">
+          <h2>Sales Funnel</h2>
+          <span class="ad-card__meta">30 Days</span>
+        </div>
+        <div class="ad-funnel">
+          <% [
+            { label: "Leads",       count: 120, pct: 100, change: nil       },
+            { label: "Contacted",   count: 82,  pct: 68,  change: nil       },
+            { label: "Negotiation", count: 41,  pct: 34,  change: "+18%"    },
+            { label: "Offer Sent",  count: 23,  pct: 19,  change: "+0%"     },
+            { label: "Closed",      count: 14,  pct: 12,  change: "+0%"     }
+          ].each do |step| %>
+            <div class="ad-funnel-item">
+              <div class="ad-funnel-bar-wrap">
+                <div class="ad-funnel-bar" style="width:<%= step[:pct] %>%">
+                  <span><%= step[:label] %></span>
+                  <strong><%= step[:count] %></strong>
+                </div>
+              </div>
+              <% if step[:change] %>
+                <span class="ad-funnel-change"><span class="ad-up-green">▲</span> <%= step[:change] %></span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="ad-card">
+        <div class="ad-card__head">
+          <h2>Top Performing Listings</h2>
+          <a href="<%= user_vehicles_path %>" class="ad-view-all">View All &rsaquo;</a>
+        </div>
+        <table class="ad-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Views ▼</th>
+              <th>Leads</th>
+              <th>Offers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if @top_vehicles.any? %>
+              <% @top_vehicles.each do |v| %>
+                <% views = v.vehicle_listing&.views_count.to_i %>
+                <tr>
+                  <td><%= v.full_name.presence || "Vehicle ##{v.id}" %></td>
+                  <td><%= number_with_delimiter(views) %></td>
+                  <td><%= [views / 5, 1].max %></td>
+                  <td><%= [views / 10, 1].max %> <span class="ad-up-green">▲</span></td>
+                </tr>
+              <% end %>
+            <% else %>
+              <tr><td colspan="4" class="ad-empty">No listings yet</td></tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ad-card">
+        <div class="ad-card__head">
+          <h2>CRM Pipeline</h2>
+          <a href="#" class="ad-view-all">View All &rsaquo;</a>
+        </div>
+        <div class="ad-crm-list">
+          <% [
+            { name: "John Smith",   car: "BMW M4",        city: "New York, NY",    time: "5 minutes ago"  },
+            { name: "Mark Johnson", car: "Mustang GT",    city: "Austin, TX",      time: "20 minutes ago" },
+            { name: "Sarah Davis",  car: "BMW M3",        city: "Los Angeles, CA", time: "35 minutes ago" }
+          ].each do |contact| %>
+            <div class="ad-crm-item">
+              <span class="ad-avatar ad-avatar--sm ad-avatar--placeholder"><%= contact[:name].first.upcase %></span>
+              <div class="ad-crm-info">
+                <p class="ad-crm-name"><%= contact[:name] %></p>
+                <p class="ad-crm-meta"><%= contact[:car] %> &middot; <%= contact[:city] %></p>
+              </div>
+              <div class="ad-crm-right">
+                <span class="ad-crm-time"><%= contact[:time] %></span>
+                <span class="ad-chevron">&rsaquo;</span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <%# ── ROW 3: Sales Team + Inventory Health + Lead Activity ──────── %>
+    <div class="ad-row ad-row--3">
+      <div class="ad-card">
+        <div class="ad-card__head">
+          <h2>Sales Team Performance</h2>
+          <svg width="16" height="16" fill="none" stroke="#b0bcd8" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="ad-team-list">
+          <% team_data = [
+            { name: current_user.full_name, amount: 210_000, sub: "Top seller"   },
+            { name: "Sarah Johnson",         amount: 84_500,  sub: "Goal: $158K" },
+            { name: "Mike Adams",            amount: 72_300,  sub: "Goal: $120K" }
+          ] %>
+          <% max_amt = team_data.map { |t| t[:amount] }.max.to_f %>
+          <% team_data.each do |member| %>
+            <div class="ad-team-item">
+              <div class="ad-team-meta">
+                <span class="ad-team-name"><%= member[:name] %></span>
+                <span class="ad-team-amount"><%= number_to_currency(member[:amount], precision: 0) %></span>
+              </div>
+              <div class="ad-team-bar-wrap">
+                <div class="ad-team-bar" style="width:<%= (member[:amount] / max_amt * 100).round %>%"></div>
+              </div>
+              <span class="ad-team-sub"><%= member[:sub] %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="ad-card">
+        <div class="ad-card__head">
+          <h2>Inventory Health</h2>
+          <a href="<%= user_vehicles_path %>" class="ad-view-all">View All &rsaquo;</a>
+        </div>
+        <div class="ad-inventory-list">
+          <% [
+            { label: "Cars listed < 7 days",  count: @stats[:published_cars],                          total: @stats[:total_cars], color: "#22c55e" },
+            { label: "Cars listed < 30 days", count: [(@stats[:published_cars] * 0.6).ceil, 0].max,    total: @stats[:total_cars], color: "#f59e0b" },
+            { label: "Cars listed > 30 days", count: [(@stats[:published_cars] * 0.25).ceil, 0].max,   total: @stats[:total_cars], color: "#3b82f6" }
+          ].each do |item| %>
+            <div class="ad-inventory-item">
+              <span class="ad-inventory-dot" style="background:<%= item[:color] %>"></span>
+              <span class="ad-inventory-label"><%= item[:label] %></span>
+              <span class="ad-inventory-count"><%= item[:count] %></span>
+              <span class="ad-inventory-total"><%= item[:total] %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="ad-card">
+        <div class="ad-card__head">
+          <h2>Lead Activity</h2>
+          <a href="#" class="ad-view-all">View All &rsaquo;</a>
+        </div>
+        <div class="ad-activity-list">
+          <% [
+            { text: "John Carter viewed BMW M4",              time: "3 min ago"   },
+            { text: "Emily sent an offer on Mustang GT",      time: "8 min ago"   },
+            { text: "Mark Johnson requested vehicle history", time: "35 min ago"  },
+            { text: "Michael Brown closed a Porsche Cayman", time: "1 hour ago"  }
+          ].each do |act| %>
+            <div class="ad-activity-item">
+              <span class="ad-avatar ad-avatar--sm ad-avatar--placeholder"><%= act[:text].first.upcase %></span>
+              <div class="ad-activity-body">
+                <p><%= act[:text] %></p>
+                <span><%= act[:time] %></span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

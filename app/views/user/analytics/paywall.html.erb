@@ -1,0 +1,56 @@
+<div class="analytics-paywall-page">
+  <%= render "shared/user_sidebar" %>
+
+  <div class="analytics-paywall-content">
+    <% popular_plan_key = "premium" %>
+
+    <header class="analytics-paywall-header">
+      <div>
+        <p class="eyebrow">Iron Cars Analytics</p>
+        <h1>Unlock advanced insights for your inventory</h1>
+        <p class="subtitle">Choose a monthly plan and track lead quality, conversion trends, and listing performance in one dashboard.</p>
+      </div>
+
+      <div class="billing-chip" aria-label="Billing type">
+        <span>Monthly billing</span>
+      </div>
+    </header>
+
+    <section class="analytics-paywall-kpis" aria-label="Analytics value highlights">
+      <article>
+        <strong>+38%</strong>
+        <p>Average lead-to-offer lift</p>
+      </article>
+      <article>
+        <strong>24/7</strong>
+        <p>Pipeline visibility</p>
+      </article>
+      <article>
+        <strong>Real-time</strong>
+        <p>Performance snapshots</p>
+      </article>
+    </section>
+
+    <section class="plans-grid">
+      <% @plans.each do |plan| %>
+        <% is_popular = plan[:key].to_s == popular_plan_key %>
+        <article class="plan-card <%= "plan-card--popular" if is_popular %>">
+          <% if is_popular %>
+            <span class="plan-badge">Most Popular</span>
+          <% end %>
+
+          <h2><%= plan[:title] %></h2>
+          <p class="price"><%= plan[:price] %></p>
+          <p class="description"><%= plan[:description] %></p>
+          <ul>
+            <% plan[:features].each do |feature| %>
+              <li><%= feature %></li>
+            <% end %>
+          </ul>
+
+          <%= button_to "Subscribe", user_billing_checkout_path(plan: plan[:key]), method: :post, class: "subscribe-btn #{"subscribe-btn--alt" unless is_popular}", data: { turbo: false } %>
+        </article>
+      <% end %>
+    </section>
+  </div>
+</div>
