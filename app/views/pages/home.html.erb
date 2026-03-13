@@ -1,3 +1,24 @@
+<% testimonials = [
+  {
+    name: "Megan Carter",
+    role: "Bought a 2023 Jeep Compass",
+    initials: "MC",
+    quote: "Fast support, accurate listing photos, and a transparent process from start to finish. I closed the deal in just a few days."
+  },
+  {
+    name: "Ryan Green",
+    role: "Sold a Corolla XSE",
+    initials: "RG",
+    quote: "My listing got strong visibility and I received serious buyer inquiries quickly. The whole selling process felt simple and efficient."
+  },
+  {
+    name: "Paula Lewis",
+    role: "Financed a T-Cross Comfortline",
+    initials: "PL",
+    quote: "The payment simulation made my decision much easier. I compared offers, adjusted monthly payments, and found the right vehicle for my budget."
+  }
+] %>
+
 <section class="home-page min-h-screen bg-slate-100">
   <div class="hero-banner shadow-xl">
     <div class="hero-overlay"></div>
@@ -66,3 +87,109 @@
   </div>
 </section>
 
+
+<section class="benefits-band" aria-label="Iron Cars advantages">
+  <div class="benefits-band__inner">
+    <div class="benefits-band__intro">
+      <span>Why Iron Cars</span>
+      <h2>Buying and selling a car should feel easy, clear, and secure.</h2>
+      <p>From first search to final signature, we help drivers across North America move faster with confidence.</p>
+    </div>
+
+    <div class="benefits-band__stats" aria-label="Marketplace highlights">
+      <article>
+        <strong>120k+</strong>
+        <p>Active listings</p>
+      </article>
+      <article>
+        <strong>50 States + Canada</strong>
+        <p>Market coverage</p>
+      </article>
+      <article>
+        <strong>4.9 / 5</strong>
+        <p>Buyer satisfaction</p>
+      </article>
+    </div>
+
+    <div class="benefits-grid">
+      <article class="benefit-card">
+        <span>01</span>
+        <h3>Smart Search</h3>
+        <p>Filter by make, model, location, and budget to find your best match in minutes.</p>
+      </article>
+      <article class="benefit-card">
+        <span>02</span>
+        <h3>Trusted Listings</h3>
+        <p>Quality-first listings with clear details, transparent pricing, and verified seller profiles.</p>
+      </article>
+      <article class="benefit-card">
+        <span>03</span>
+        <h3>Direct Negotiation</h3>
+        <p>Talk directly with the other party, compare offers, and close the deal with less friction.</p>
+      </article>
+      <article class="benefit-card">
+        <span>04</span>
+        <h3>Payment Guidance</h3>
+        <p>Estimate monthly payments and align financing options before you commit.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="reviews-shell">
+    <section class="reviews-section">
+      <div class="section-heading">
+        <span>Customer Reviews</span>
+        <h2>Drivers across the U.S. and Canada trust Iron Cars.</h2>
+        <p>Real experiences from buyers and sellers who closed better deals with speed and confidence.</p>
+      </div>
+
+      <div class="reviews-grid">
+        <% testimonials.each do |testimonial| %>
+          <article class="review-card">
+            <div class="review-card__header">
+              <div class="review-avatar"><span><%= testimonial[:initials] %></span></div>
+              <div>
+                <h3><%= testimonial[:name] %></h3>
+                <p><%= testimonial[:role] %></p>
+              </div>
+              <div class="review-stars" aria-label="5 out of 5 stars">
+                <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
+              </div>
+            </div>
+
+            <blockquote>
+              "<%= testimonial[:quote] %>"
+            </blockquote>
+
+            <div class="review-card__footer">
+              <span>Verified customer</span>
+              <div class="review-dots" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </article>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="home-cta-band">
+      <div>
+        <span class="home-cta-band__eyebrow">Your next car is here.</span>
+        <h2>Compare listings, simulate monthly payments, and move to negotiation with confidence.</h2>
+      </div>
+
+      <div class="home-cta-band__actions">
+        <%= link_to "Browse vehicles", cars_path, class: "hero-btn primary" %>
+        <% if user_signed_in? %>
+          <%= link_to "Go to dashboard", user_dashboard_path, class: "hero-btn secondary" %>
+        <% else %>
+          <%= link_to "Sign in", new_user_session_path, class: "hero-btn secondary" %>
+        <% end %>
+      </div>
+    </section>
+  </div>
+</section>
