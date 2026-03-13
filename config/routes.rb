@@ -33,6 +33,7 @@ Rails.application.routes.draw do
   end
 
   post "webhooks/stripe", to: "webhooks/stripe#create"
+  post "api/v1/webhooks/stripe", to: "webhooks/stripe#create"
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

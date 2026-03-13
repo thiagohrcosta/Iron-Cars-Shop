@@ -41,10 +41,10 @@ class Webhooks::StripeController < ActionController::API
     price_id = stripe_subscription.dig("items", "data", 0, "price", "id")
     price = stripe.retrieve_price(price_id)
 
-    Billing::SubscriptionSynchronizer.sync_from_subscription!(
+    Billing::SubscriptionSynchronizer.sync_from_stripe!(
       user: user,
       stripe_subscription: stripe_subscription,
-      price_lookup_key: price.fetch("lookup_key")
+      product_id: price.fetch("product")
     )
   end
 end

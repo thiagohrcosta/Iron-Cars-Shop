@@ -19,9 +19,12 @@ module Billing
       })
     end
 
-    def find_price_by_lookup_key(lookup_key)
-      response = get("/prices", { lookup_keys: [ lookup_key ], active: true, limit: 1 })
-      response.fetch("data").first
+    def find_price_by_product(product_id)
+      response = get("/prices", { product: product_id, active: true, limit: 1 })
+      price = response.fetch("data").first
+      raise StripeError, "No active Stripe price found for product: #{product_id}" unless price
+
+      price
     end
 
     def create_checkout_session(customer_id:, price_id:, success_url:, cancel_url:)
@@ -38,6 +41,11 @@ module Billing
 
     def retrieve_subscription(subscription_id)
       get("/subscriptions/#{subscription_id}")
+    end
+
+    def latest_subscription_for_customer(customer_id)
+      response = get("/subscriptions", { customer: customer_id, status: "all", limit: 1 })
+      response.fetch("data").first
     end
 
     def retrieve_price(price_id)
@@ -60,16 +68,42 @@ module Billing
     attr_reader :secret_key
 
     def get(path, params = {})
-      uri = URI.join(STRIPE_API_BASE_URL, path)
+      uri = stripe_uri(path)
       uri.query = URI.encode_www_form(params) if params.present?
       perform_request(Net::HTTP::Get.new(uri))
     end
 
     def post_form(path, params)
-      uri = URI.join(STRIPE_API_BASE_URL, path)
+      uri = stripe_uri(path)
       req = Net::HTTP::Post.new(uri)
-      req.set_form_data(params)
+      req.set_form_data(flatten_form_params(params))
       perform_request(req)
+    end
+
+    def stripe_uri(path)
+      normalized_path = path.to_s.sub(%r{\A/+}, "")
+      URI.join("#{STRIPE_API_BASE_URL}/", normalized_path)
+    end
+
+    def flatten_form_params(value, prefix = nil, result = {})
+      case value
+      when Hash
+        value.each do |key, nested_value|
+          next if nested_value.nil?
+
+          nested_prefix = prefix ? "#{prefix}[#{key}]" : key.to_s
+          flatten_form_params(nested_value, nested_prefix, result)
+        end
+      when Array
+        value.each_with_index do |nested_value, index|
+          nested_prefix = "#{prefix}[#{index}]"
+          flatten_form_params(nested_value, nested_prefix, result)
+        end
+      else
+        result[prefix] = value
+      end
+
+      result
     end
 
     def perform_request(request)
