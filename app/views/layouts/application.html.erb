@@ -30,5 +30,6 @@
       <%= yield %>
       <%= render "shared/footer" %>
     </main>
+    <%= render "shared/lead_chat_widget" unless user_signed_in? %>
   </body>
 </html>

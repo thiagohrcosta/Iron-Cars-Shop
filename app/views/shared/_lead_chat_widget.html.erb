@@ -1,0 +1,53 @@
+<section
+  class="lead-chat"
+  data-controller="lead-chat"
+  data-lead-chat-endpoint-value="<%= lead_chat_messages_path %>"
+  data-lead-chat-initial-message-value="Hi there. I can help you find a great vehicle today. Before we start, may I have your name and best email?"
+>
+  <button
+    type="button"
+    class="lead-chat__launcher"
+    data-action="lead-chat#toggle"
+    data-lead-chat-target="launcher"
+    aria-expanded="false"
+    aria-controls="lead-chat-panel"
+  >
+    <span class="lead-chat__badge" data-lead-chat-target="badge">1</span>
+    <span class="lead-chat__launcher-icon">Chat</span>
+  </button>
+
+  <div
+    id="lead-chat-panel"
+    class="lead-chat__panel"
+    data-lead-chat-target="panel"
+    hidden
+  >
+    <div class="lead-chat__header">
+      <div>
+        <strong>Iron Cars Assistant</strong>
+        <p>We can help match you with the right vehicle.</p>
+      </div>
+      <button type="button" class="lead-chat__close" data-action="lead-chat#toggle" aria-label="Close chat">x</button>
+    </div>
+
+    <div class="lead-chat__messages" data-lead-chat-target="messages"></div>
+
+    <div class="lead-chat__restart" data-lead-chat-target="restart" hidden>
+      <button type="button" class="lead-chat__restart-btn" data-action="lead-chat#startNewChat">
+        START NEW CHAT
+      </button>
+    </div>
+
+    <form class="lead-chat__form" data-action="submit->lead-chat#sendMessage" data-lead-chat-target="form">
+      <input
+        type="text"
+        name="message"
+        class="lead-chat__input"
+        placeholder="Type your message"
+        autocomplete="off"
+        data-lead-chat-target="input"
+      >
+      <button type="submit" class="lead-chat__submit" data-lead-chat-target="submit">Send</button>
+    </form>
+  </div>
+</section>
