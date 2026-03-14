@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   root "pages#home"
   get "cars", to: "cars#index", as: :cars
   get "cars/:id", to: "cars#show", as: :car
+  post "lead_chat/messages", to: "lead_chat_messages#create", as: :lead_chat_messages
 
   get "dashboard", to: "dashboard_redirects#show"
 
