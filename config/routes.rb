@@ -20,9 +20,11 @@ Rails.application.routes.draw do
 
   namespace :admin do
     get "dashboard", to: "dashboards#show"
-    resources :leads, only: :index do
+    resources :leads, only: [ :index, :create, :update ] do
       member do
         post :distribute
+        post :confirm_distribution
+        post :retry_distribution
         patch :update_status
       end
     end

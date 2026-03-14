@@ -42,4 +42,24 @@ class Admin::LeadsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_leads_url(anchor: "lead_#{@lead.id}")
     assert_equal "qualified", @lead.reload.status
   end
+
+  test "admin can create a manual referral lead" do
+    sign_in @admin
+
+    assert_difference("Lead.count", 1) do
+      post admin_leads_url, params: {
+        lead: {
+          name: "Manual Lead",
+          email: "manuallead@example.com",
+          phone: "+1 555 101 2020",
+          interested_in: [ "brand:BMW", "model:M4", "city:New York" ]
+        }
+      }
+    end
+
+    created_lead = Lead.order(:created_at).last
+    assert_redirected_to admin_leads_url(anchor: "lead_#{created_lead.id}")
+    assert_equal "referral", created_lead.source
+    assert_equal [ "brand:BMW", "model:M4", "city:New York" ], created_lead.interested_in
+  end
 end

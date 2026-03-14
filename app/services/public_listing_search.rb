@@ -41,7 +41,7 @@ class PublicListingSearch
     if @filters[:brand_id].present?
       @relation = relation.where(car_models: { brand_id: @filters[:brand_id] })
     elsif @filters[:brand].present?
-      @relation = relation.where("brands.name ILIKE ?", @filters[:brand].to_s)
+      @relation = relation.where("brands.name ILIKE ?", "%#{@filters[:brand]}%")
     end
   end
 
@@ -98,7 +98,7 @@ class PublicListingSearch
 
       if state.present?
         clauses << "users.address_state ILIKE :state"
-        values[:state] = "%#{state}%"
+        values[:state] = state.to_s.upcase
       end
 
       @relation = relation.where(clauses.join(" OR "), values)
