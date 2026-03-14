@@ -14,7 +14,7 @@ class User::NegotiationMessagesController < ApplicationController
       end
     else
       @negotiations = Negotiation.for_user(current_user)
-        .includes(:buyer, :seller, vehicle: [ :car_model, :photos_attachments, :user ], negotiation_messages: :user)
+        .includes(:buyer, :seller, :lead, vehicle: [ :car_model, :photos_attachments, :user ], negotiation_messages: :user)
         .order(updated_at: :desc)
       @selected_negotiation = @negotiation
       @messages = @negotiation.negotiation_messages.order(:created_at)

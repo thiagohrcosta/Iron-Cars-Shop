@@ -1,0 +1,202 @@
+<% stat_cards = [
+  { label: "Total Leads", value: @leads.size, accent: "+ #{@leads.size}", icon: "●" },
+  { label: "New Leads Today", value: @leads_by_stage["new"].size, accent: "+ #{@leads_by_stage["new"].size}", icon: "●" },
+  { label: "Negotiation", value: @leads_by_stage["negotiation"].size, accent: "+ #{@leads_by_stage["negotiation"].size}", icon: "●" },
+  { label: "Won", value: @leads_by_stage["won"].size, accent: "#{@leads_by_stage["won"].size} closed", icon: "●" },
+  { label: "Revenue Potential", value: number_to_currency(@leads.count * 24_000, precision: 0), accent: nil, icon: "●" }
+] %>
+
+<% column_meta = {
+  "new" => {
+    tone: "from-[#315bb8] to-[#27428d]",
+    edge: "bg-[#5f8fff]",
+    hint: "#{@leads_by_stage["new"].size} added today"
+  },
+  "contacted" => {
+    tone: "from-[#5f82d6] to-[#3e5ea5]",
+    edge: "bg-[#a9c4ff]",
+    hint: "#{@leads_by_stage["contacted"].size} active follow-up"
+  },
+  "negotiation" => {
+    tone: "from-[#f0c86f] to-[#b48a2d]",
+    edge: "bg-[#ffd97d]",
+    hint: "#{@leads_by_stage["negotiation"].size} seller replied"
+  },
+  "won" => {
+    tone: "from-[#5bc2ae] to-[#2b8d7a]",
+    edge: "bg-[#7ee4cf]",
+    hint: "#{@leads_by_stage["won"].size} closed deals"
+  },
+  "lost" => {
+    tone: "from-[#7188b4] to-[#475b84]",
+    edge: "bg-[#9db0d8]",
+    hint: "#{@leads_by_stage["lost"].size} archived"
+  }
+} %>
+
+<div class="min-h-screen bg-white flex">
+  <%= render "shared/user_sidebar" %>
+
+  <div class="flex-1 bg-white">
+    <div class="border-b border-slate-200 bg-linear-to-r from-[#14244a] via-[#16274f] to-[#1a2c56] px-6 py-5 text-white shadow-sm">
+      <div class="flex flex-col gap-5">
+        <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+          <div>
+            <h1 class="text-4xl font-bold tracking-tight">Leads Management</h1>
+            <p class="mt-2 text-sm text-slate-300">Track inbound demand, classify opportunities, and move leads across your pipeline.</p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="hidden min-w-[14rem] items-center gap-3 rounded-full border border-white/10 bg-white/8 px-4 py-3 text-sm text-slate-300 lg:flex">
+              <span class="text-base">⌕</span>
+              <span>Search...</span>
+            </div>
+            <button class="rounded-2xl bg-linear-to-r from-[#4f86ff] to-[#2b5de0] px-6 py-3 text-base font-semibold shadow-lg shadow-blue-950/25 transition hover:brightness-110">
+              + Add Lead
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <% stat_cards.each do |card| %>
+            <div class="rounded-2xl border border-white/10 bg-white/7 px-5 py-4 backdrop-blur-sm">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <div class="text-3xl font-bold leading-none"><%= card[:value] %></div>
+                  <div class="mt-3 text-base text-slate-100"><%= card[:label] %></div>
+                  <% if card[:accent].present? %>
+                    <div class="mt-1 text-sm text-emerald-300"><%= card[:accent] %></div>
+                  <% end %>
+                </div>
+                <div class="rounded-xl bg-white/10 px-3 py-2 text-sm text-slate-100"><%= card[:icon] %></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <% ["Filter", "Status", "Import Leads", "Sales Agent", "Date Range"].each do |label| %>
+            <button class="rounded-xl border border-white/10 bg-white/7 px-4 py-3 text-sm font-medium text-slate-200 transition hover:bg-white/10">
+              <%= label %>
+            </button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <main class="p-6">
+      <% if flash[:notice].present? || flash[:alert].present? %>
+        <div class="mb-5 rounded-2xl border <%= flash[:alert].present? ? 'border-red-200 bg-red-50 text-red-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700' %> px-4 py-3">
+          <%= flash[:alert].presence || flash[:notice] %>
+        </div>
+      <% end %>
+
+      <section class="grid grid-cols-1 gap-4 2xl:grid-cols-5 xl:grid-cols-3">
+        <% Lead::PIPELINE_STAGES.each do |stage| %>
+          <% leads = @leads_by_stage[stage] %>
+          <% meta = column_meta.fetch(stage) %>
+
+          <div class="overflow-hidden rounded-[22px] border border-slate-200 bg-[#f4f7fc]">
+            <div class="h-1.5 <%= meta[:edge] %>"></div>
+
+            <div class="bg-gradient-to-r <%= meta[:tone] %> px-4 py-4 text-white">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="flex items-baseline gap-2">
+                    <h2 class="text-2xl font-bold"><%= stage.humanize %></h2>
+                    <span class="text-sm text-white/75"><%= leads.size %></span>
+                  </div>
+                  <p class="mt-1 text-xs uppercase tracking-wide text-white/75"><%= meta[:hint] %></p>
+                </div>
+                <div class="text-2xl font-bold leading-none"><%= leads.size %></div>
+              </div>
+            </div>
+
+            <div class="min-h-[38rem] space-y-3 bg-[#eef3fb] p-4">
+              <% if leads.any? %>
+                <% leads.each do |lead| %>
+                  <article id="lead_<%= lead.id %>" class="rounded-[20px] border border-slate-200 bg-white px-4 py-4 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="min-w-0">
+                        <h3 class="truncate text-[1.35rem] font-semibold leading-tight text-slate-900"><%= lead.name %></h3>
+                        <p class="truncate text-sm text-slate-500"><%= lead.interested_in.first.presence || "Vehicle inquiry" %></p>
+                      </div>
+                      <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+                        <%= lead.source.humanize %>
+                      </span>
+                    </div>
+
+                    <div class="mt-3 space-y-1 text-sm text-slate-500">
+                      <p class="truncate"><%= lead.email %></p>
+                      <% if lead.phone.present? %>
+                        <p><%= lead.phone %></p>
+                      <% end %>
+                    </div>
+
+                    <div class="mt-4 rounded-2xl bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                      <strong>Interest:</strong>
+                      <%= lead.interested_in.presence&.join(", ") || "Not informed" %>
+                    </div>
+
+                    <div class="mt-4 flex items-center justify-between gap-3 text-sm">
+                      <span class="text-slate-400"><%= time_ago_in_words(lead.updated_at) %> ago</span>
+                      <span class="font-semibold text-slate-800"><%= stage.humanize %></span>
+                    </div>
+
+                    <div class="mt-4 flex flex-wrap gap-2">
+                      <% if lead.distributed? %>
+                        <span class="rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
+                          Matched
+                        </span>
+                      <% else %>
+                        <%= button_to "Distribute with AI",
+                              distribute_admin_lead_path(lead),
+                              method: :post,
+                              class: "rounded-full bg-blue-600 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-white transition hover:bg-blue-700" %>
+                      <% end %>
+
+                      <% Lead.statuses.keys.reject { |value| value == lead.status }.each do |target_status| %>
+                        <%= button_to target_status.humanize,
+                              update_status_admin_lead_path(lead, status: target_status),
+                              method: :patch,
+                              class: "rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-600 transition hover:border-slate-300 hover:bg-slate-50" %>
+                      <% end %>
+                    </div>
+
+                    <% if lead.distributed? && lead.matched_vehicle_listing.present? %>
+                      <div class="mt-4 rounded-2xl bg-blue-50 px-3 py-3 text-sm text-blue-900">
+                        <strong>Matched listing:</strong> <%= lead.matched_vehicle_listing.vehicle.full_name %><br>
+                        <strong>Seller:</strong> <%= lead.matched_seller&.full_name.presence || lead.matched_seller&.email %>
+                      </div>
+                    <% end %>
+
+                    <% if lead.latest_negotiation.present? %>
+                      <div class="mt-4 rounded-2xl bg-slate-50 px-3 py-3 text-sm text-slate-700">
+                        <strong>Negotiation:</strong>
+                        <% if lead.latest_negotiation.accepted? %>
+                          Deal closed successfully.
+                        <% elsif lead.latest_negotiation.seller_replied? %>
+                          Seller already replied and negotiation is active.
+                        <% elsif lead.latest_negotiation.lead_stale_without_offers? %>
+                          No buyer offer within 72 hours.
+                        <% elsif lead.latest_negotiation.offer_limit_reached? %>
+                          Closed after 3 offer attempts without agreement.
+                        <% else %>
+                          Waiting for seller reply.
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </article>
+                <% end %>
+              <% else %>
+                <div class="rounded-[20px] border border-dashed border-slate-300 bg-white/70 px-5 py-10 text-center text-sm text-slate-500">
+                  No leads in <strong><%= stage.humanize.downcase %></strong> right now.
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </section>
+    </main>
+  </div>
+</div>

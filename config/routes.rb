@@ -1,15 +1,31 @@
 Rails.application.routes.draw do
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+
   devise_for :users, controllers: { registrations: "users/registrations" }
 
   root "pages#home"
   get "cars", to: "cars#index", as: :cars
   get "cars/:id", to: "cars#show", as: :car
   post "lead_chat/messages", to: "lead_chat_messages#create", as: :lead_chat_messages
+  get "lead-access/:token", to: "public/lead_negotiations#show", as: :public_lead_negotiation
+  post "lead-access/:token/messages", to: "public/lead_negotiation_messages#create", as: :public_lead_negotiation_messages
+
+  namespace :api do
+    namespace :v1 do
+      resources :listings, only: :index
+    end
+  end
 
   get "dashboard", to: "dashboard_redirects#show"
 
   namespace :admin do
     get "dashboard", to: "dashboards#show"
+    resources :leads, only: :index do
+      member do
+        post :distribute
+        patch :update_status
+      end
+    end
   end
 
   namespace :user do

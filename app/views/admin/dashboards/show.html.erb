@@ -1,4 +1,19 @@
-<section class="min-h-screen p-6 bg-slate-100">
-  <h1 class="text-2xl font-semibold text-slate-900">Admin Dashboard</h1>
-  <p class="mt-2 text-slate-600">Layout pendente. Esta página será personalizada no próximo passo.</p>
-</section>
+<div class="min-h-screen bg-slate-100 flex">
+  <%= render "shared/user_sidebar" %>
+
+  <div class="flex-1 flex flex-col">
+    <header class="bg-white shadow-sm px-6 py-4">
+      <h1 class="text-2xl font-bold text-slate-800">Admin Dashboard</h1>
+      <p class="mt-1 text-sm text-slate-500">Monitor users, listings, messages, and marketplace operations.</p>
+    </header>
+
+    <main class="p-6">
+      <section class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-900">Admin workspace</h2>
+        <p class="mt-2 max-w-2xl text-slate-600">
+          The admin navigation is ready. The linked sections can now be implemented one by one using this sidebar structure.
+        </p>
+      </section>
+    </main>
+  </div>
+</div>

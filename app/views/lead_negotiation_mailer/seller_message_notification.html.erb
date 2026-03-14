@@ -1,0 +1,30 @@
+<div style="font-family: Arial, sans-serif; background: #f8fafc; padding: 32px; color: #0f172a;">
+  <div style="max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 20px; padding: 32px; border: 1px solid #e2e8f0;">
+    <p style="margin: 0 0 8px; color: #2563eb; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;">Iron Cars Shop</p>
+    <h1 style="margin: 0 0 16px; font-size: 28px; line-height: 1.2;">The seller sent you a new message</h1>
+
+    <p style="margin: 0 0 12px; font-size: 16px; line-height: 1.6;">
+      Hi <strong><%= @lead.name %></strong>, <%= @seller.full_name.presence || @seller.email %> replied about
+      <strong><%= @vehicle.full_name %></strong>.
+    </p>
+
+    <div style="margin: 24px 0; padding: 20px; border-radius: 16px; background: #eff6ff; border: 1px solid #bfdbfe;">
+      <p style="margin: 0; white-space: pre-wrap; font-size: 16px; line-height: 1.7;"><%= @message.content %></p>
+    </div>
+
+    <a
+      href="<%= @conversation_url %>"
+      style="display: inline-block; margin: 0 0 18px; border-radius: 999px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; text-decoration: none; font-weight: 700; padding: 14px 22px;"
+    >
+      Open secure conversation
+    </a>
+
+    <p style="margin: 0 0 12px; font-size: 15px; line-height: 1.6; color: #475569;">
+      Use the button above to access your secure conversation and reply without logging in.
+    </p>
+
+    <p style="margin: 24px 0 0; font-size: 14px; color: #64748b;">
+      Sent by Iron Cars Shop on behalf of the seller.
+    </p>
+  </div>
+</div>

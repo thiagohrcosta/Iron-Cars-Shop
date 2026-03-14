@@ -130,7 +130,7 @@ class User::NegotiationsController < ApplicationController
 
   def load_negotiations
     @negotiations = Negotiation.for_user(current_user)
-      .includes(:buyer, :seller, vehicle: [ :car_model, :photos_attachments, :user ], negotiation_messages: :user)
+      .includes(:buyer, :seller, :lead, vehicle: [ :car_model, :photos_attachments, :user ], negotiation_messages: :user)
       .order(updated_at: :desc)
   end
 
@@ -162,7 +162,7 @@ class User::NegotiationsController < ApplicationController
   end
 
   def broadcast_negotiation_meta_to_participants(negotiation)
-    [ negotiation.buyer_id, negotiation.seller_id ].uniq.each do |participant_id|
+    [ negotiation.buyer_id, negotiation.seller_id ].compact.uniq.each do |participant_id|
       Turbo::StreamsChannel.broadcast_replace_to(
         negotiation,
         :meta,

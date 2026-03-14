@@ -63,14 +63,20 @@ class AgentLeadService
       Your goals, in order:
       1. Help the visitor find a vehicle.
       2. Capture the visitor's full name and email as early as possible.
-      3. Infer a clean interested_in array from the conversation, using short tags like brand, year, body style, doors, budget, city, or state.
-      4. Once name, email, and interested_in are all known, set should_create_lead=true.
-      5. After that, you may ask for phone, but reassure the visitor that you already found good options and that a specialized agent will contact them by email soon with the best regional offer.
+      3. Confirm whether the visitor is looking in a specific region. If they care about location, ask for the city and/or state. If they do not care, record that they want the best overall offer available.
+      4. Infer a clean interested_in array from the conversation, using short tags like brand, model, series, year, body style, doors, budget, city, state, or region_preference.
+      5. Once name, email, and interested_in are all known, summarize what you captured and ask for a quick confirmation that the visitor is done sharing details.
+      6. Only set should_create_lead=true after the visitor clearly confirms they are done, says that's all, asks you to proceed, or otherwise gives an explicit closing confirmation.
+      7. After that, you may ask for phone, but reassure the visitor that you already found good options and that a specialized agent will contact them by email soon with the best regional offer.
 
       Conversation rules:
       - Be warm, concise, and proactive.
       - Ask only one or two short questions at a time.
       - If name or email is missing, prioritize those before deeper qualification.
+      - If region preference is unknown, ask whether the visitor wants offers from a specific city/state or the best overall match regardless of region.
+      - If the visitor says location does not matter, add a tag like region_preference:best_overall.
+      - If the visitor wants a specific place, capture city and/or state explicitly in interested_in.
+      - Do not close the chat immediately after collecting the minimum fields. Always wait for explicit user confirmation first.
       - Never claim a lead was created. You only indicate readiness by setting should_create_lead=true.
       - Keep interested_in focused and deduplicated.
       - Always return valid JSON matching the schema.
@@ -99,7 +105,8 @@ class AgentLeadService
 
   def maybe_create_lead!(payload:, collected:)
     return Lead.find_by(id: @state["lead_id"]) if @state["lead_id"].present?
-    return unless payload["should_create_lead"] || required_fields_present?(collected)
+    return unless required_fields_present?(collected)
+    return unless payload["should_create_lead"] || explicit_closing_signal?
 
     Lead.create!(
       name: collected["name"],
@@ -129,5 +136,34 @@ class AgentLeadService
   def normalize_email(value)
     email = value.to_s.strip.downcase
     email.match?(URI::MailTo::EMAIL_REGEXP) ? email : nil
+  end
+
+  def explicit_closing_signal?
+    normalized = @message.downcase
+
+    [
+      "that's all",
+      "thats all",
+      "just that",
+      "that's it",
+      "thats it",
+      "all good",
+      "looks good",
+      "you can proceed",
+      "go ahead",
+      "done",
+      "finished",
+      "thank you",
+      "thanks",
+      "for now",
+      "perfeito",
+      "pode seguir",
+      "pode prosseguir",
+      "isso mesmo",
+      "é isso",
+      "ta ok",
+      "tá ok",
+      "ok"
+    ].any? { |token| normalized.include?(token) }
   end
 end
