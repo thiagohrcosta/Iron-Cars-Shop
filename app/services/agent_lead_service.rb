@@ -37,6 +37,7 @@ class AgentLeadService
     payload = ai_response.fetch(:parsed).deep_stringify_keys
     collected = merge_collected_data(payload)
     lead = maybe_create_lead!(payload:, collected:)
+    conversation_closed = lead.present?
     assistant_message = finalize_message(payload["assistant_message"], lead:)
 
     {
@@ -44,7 +45,8 @@ class AgentLeadService
       lead_created: lead.present?,
       lead_id: lead&.id,
       collected: collected,
-      session_state: @state.merge(
+      conversation_closed: conversation_closed,
+      session_state: conversation_closed ? {} : @state.merge(
         "previous_response_id" => ai_response[:response_id],
         "lead_id" => lead&.id || @state["lead_id"],
         "collected" => collected
@@ -105,7 +107,7 @@ class AgentLeadService
       phone: collected["phone"],
       interested_in: collected["interested_in"],
       source: :agent_lead,
-      status: :new
+      status: :qualified
     )
   end
 
@@ -120,7 +122,7 @@ class AgentLeadService
     base_message = message.to_s.strip
     return base_message if lead.blank?
 
-    closing = " I already found some promising vehicles here, and a specialized agent will reach out by email soon with the best offer in your area."
+    closing = " I already found some promising vehicles here, and a specialized agent will reach out by email soon with the best offer in your area. This chat is now complete."
     base_message.include?("specialized agent") ? base_message : "#{base_message}#{closing}"
   end
 

@@ -1,5 +1,5 @@
 class Lead < ApplicationRecord
-  enum :status, { new: 0, contacted: 1, qualified: 2, lost: 3 }
+  enum :status, { new: 0, contacted: 1, qualified: 2, lost: 3 }, prefix: true
   enum :source, { facebook_ads: 0, referral: 1, iron_cars_website: 2, agent_lead: 3 }
 
   normalizes :email, with: ->(value) { value.to_s.strip.downcase.presence }

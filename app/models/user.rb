@@ -22,7 +22,7 @@ class User < ApplicationRecord
             :address_country,
             presence: true
 
-  enum :role, { user: 0, admin: 1 }
+  enum :role, { user: 0, admin: 1, agent: 2 }
 
   def active_subscription
     subscription if subscription&.active_access?

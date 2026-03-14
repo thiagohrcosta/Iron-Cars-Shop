@@ -28,12 +28,15 @@ class AgentLeadServiceTest < ActiveSupport::TestCase
       result = service.call
 
       assert_equal true, result[:lead_created]
+      assert_equal true, result[:conversation_closed]
       assert_equal "taylor@example.com", result[:collected]["email"]
       assert_includes result[:assistant_message], "specialized agent"
+      assert_equal({}, result[:session_state])
     end
 
     lead = Lead.order(:created_at).last
     assert_equal [ "Fiat", "2025", "4 doors", "New York" ], lead.interested_in
     assert_equal "agent_lead", lead.source
+    assert_equal "qualified", lead.status
   end
 end

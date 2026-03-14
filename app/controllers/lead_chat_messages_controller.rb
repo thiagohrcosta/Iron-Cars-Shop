@@ -5,13 +5,18 @@ class LeadChatMessagesController < ApplicationController
       state: lead_chat_session
     ).call
 
-    session[:lead_chat] = result[:session_state]
+    if result[:session_state].present?
+      session[:lead_chat] = result[:session_state]
+    else
+      session.delete(:lead_chat)
+    end
 
     render json: {
       assistant_message: result[:assistant_message],
       lead_created: result[:lead_created],
       lead_id: result[:lead_id],
-      collected: result[:collected]
+      collected: result[:collected],
+      conversation_closed: result[:conversation_closed]
     }
   rescue ActionController::ParameterMissing, ArgumentError => e
     render json: { error: e.message }, status: :unprocessable_entity

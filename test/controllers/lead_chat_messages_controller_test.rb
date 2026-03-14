@@ -7,6 +7,7 @@ class LeadChatMessagesControllerTest < ActionDispatch::IntegrationTest
         assistant_message: "I already found some promising vehicles here.",
         lead_created: true,
         lead_id: 77,
+        conversation_closed: true,
         collected: {
           "name" => "Taylor",
           "email" => "taylor@example.com",
@@ -14,14 +15,6 @@ class LeadChatMessagesControllerTest < ActionDispatch::IntegrationTest
           "interested_in" => [ "Fiat", "2025", "New York" ]
         },
         session_state: {
-          "previous_response_id" => "resp_123",
-          "lead_id" => 77,
-          "collected" => {
-            "name" => "Taylor",
-            "email" => "taylor@example.com",
-            "phone" => nil,
-            "interested_in" => [ "Fiat", "2025", "New York" ]
-          }
         }
       }
     end
@@ -36,6 +29,7 @@ class LeadChatMessagesControllerTest < ActionDispatch::IntegrationTest
 
     payload = JSON.parse(response.body)
     assert_equal true, payload["lead_created"]
+    assert_equal true, payload["conversation_closed"]
     assert_equal "taylor@example.com", payload.dig("collected", "email")
   end
 end
