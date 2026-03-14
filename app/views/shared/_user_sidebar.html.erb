@@ -6,21 +6,61 @@
     <%= image_tag "logo.png", alt: "Iron Cars Shop", class: "h-14 w-auto" %>
   </div>
 
-  <nav class="flex-1 px-4 py-6 space-y-2 text-sm">
-    <a href="<%= user_dashboard_path %>" class="block px-4 py-2 rounded-lg hover:bg-slate-800 <%= 'bg-slate-800/80 font-semibold' if current_page?(user_dashboard_path) rescue false %>">Dashboard</a>
-    <a href="<%= user_vehicles_path %>" class="block px-4 py-2 rounded-lg hover:bg-slate-800 <%= 'bg-slate-800/80 font-semibold' if current_page?(user_vehicles_path) rescue false %>">My Listings</a>
-    <a href="<%= user_negotiations_path %>" class="block px-4 py-2 rounded-lg hover:bg-slate-800 <%= 'bg-slate-800/80 font-semibold' if current_page?(user_negotiations_path) rescue false %>">Offers</a>
-    <a href="<%= cars_path %>" class="block px-4 py-2 rounded-lg hover:bg-slate-800 <%= 'bg-slate-800/80 font-semibold' if current_page?(cars_path) rescue false %>">Sales</a>
-    <a href="<%= user_analytics_path %>" class="block px-4 py-2 rounded-lg hover:bg-slate-800 <%= 'bg-slate-800/80 font-semibold' if current_page?(user_analytics_path) rescue false %>">Analytics</a>
-    <a href="#" class="block px-4 py-2 rounded-lg hover:bg-slate-800">Settings</a>
-  </nav>
+  <% if current_user.admin? %>
+    <% admin_items = [
+      { key: :dashboard, label: "Dashboard", path: admin_dashboard_path, active: current_page?(admin_dashboard_path), badge: nil },
+      { key: :users, label: "Users", path: "#", active: false, badge: nil },
+      { key: :listings, label: "Listings", path: "#", active: false, badge: nil },
+      { key: :messages, label: "Messages", path: "#", active: false, badge: 5 },
+      { key: :leads, label: "Leads", path: admin_leads_path, active: current_page?(admin_leads_path), badge: nil },
+      { key: :sales, label: "Sales", path: "#", active: false, badge: nil },
+      { key: :analytics, label: "Analytics", path: "#", active: false, badge: nil },
+      { key: :wallet, label: "Wallet", path: "#", active: false, badge: nil },
+      { key: :settings, label: "Settings", path: "#", active: false, badge: nil }
+    ] %>
 
-  <div class="px-4 pb-6">
-    <a href="<%= new_user_vehicle_path %>" class="block text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg">+ Sell Your Car</a>
-  </div>
+    <nav class="flex-1 px-3 py-5 space-y-1.5 text-[15px]">
+      <% admin_items.each do |item| %>
+        <% item_classes = item[:active] ? "bg-blue-900/40 text-white shadow-sm" : "text-slate-200 hover:bg-white/10 hover:text-white" %>
+        <a
+          href="<%= item[:path] %>"
+          class="flex items-center justify-between rounded-lg px-4 py-3 transition-colors <%= item_classes %>"
+          <%= 'aria-current="page"' if item[:active] %>
+        >
+          <span class="flex items-center gap-3">
+            <span class="h-5 w-5 shrink-0 text-slate-100 [&_svg]:h-5 [&_svg]:w-5"><%= dashboard_sidebar_icon(item[:key]) %></span>
+            <span><%= item[:label] %></span>
+          </span>
+          <% if item[:badge].present? %>
+            <span class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[11px] font-bold text-white">
+              <%= item[:badge] %>
+            </span>
+          <% end %>
+        </a>
+      <% end %>
+    </nav>
 
-  <div class="px-4 pb-6 text-sm text-slate-300">
-    <p class="font-semibold text-white"><%= current_user.full_name.presence || current_user.email %></p>
-    <p>Seller</p>
-  </div>
+    <div class="px-4 pb-6 text-sm text-slate-300">
+      <p class="font-semibold text-white"><%= current_user.full_name.presence || current_user.email %></p>
+      <p>Administrator</p>
+    </div>
+  <% else %>
+    <nav class="flex-1 px-4 py-6 space-y-2 text-sm">
+      <a href="<%= user_dashboard_path %>" class="block px-4 py-2 rounded-lg hover:bg-slate-800 <%= 'bg-slate-800/80 font-semibold' if current_page?(user_dashboard_path) rescue false %>">Dashboard</a>
+      <a href="<%= user_vehicles_path %>" class="block px-4 py-2 rounded-lg hover:bg-slate-800 <%= 'bg-slate-800/80 font-semibold' if current_page?(user_vehicles_path) rescue false %>">My Listings</a>
+      <a href="<%= user_negotiations_path %>" class="block px-4 py-2 rounded-lg hover:bg-slate-800 <%= 'bg-slate-800/80 font-semibold' if current_page?(user_negotiations_path) rescue false %>">Offers</a>
+      <a href="<%= cars_path %>" class="block px-4 py-2 rounded-lg hover:bg-slate-800 <%= 'bg-slate-800/80 font-semibold' if current_page?(cars_path) rescue false %>">Sales</a>
+      <a href="<%= user_analytics_path %>" class="block px-4 py-2 rounded-lg hover:bg-slate-800 <%= 'bg-slate-800/80 font-semibold' if current_page?(user_analytics_path) rescue false %>">Analytics</a>
+      <a href="#" class="block px-4 py-2 rounded-lg hover:bg-slate-800">Settings</a>
+    </nav>
+
+    <div class="px-4 pb-6">
+      <a href="<%= new_user_vehicle_path %>" class="block text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg">+ Sell Your Car</a>
+    </div>
+
+    <div class="px-4 pb-6 text-sm text-slate-300">
+      <p class="font-semibold text-white"><%= current_user.full_name.presence || current_user.email %></p>
+      <p>Seller</p>
+    </div>
+  <% end %>
 </aside>

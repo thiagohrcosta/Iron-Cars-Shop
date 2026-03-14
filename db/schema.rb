@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_14_013000) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_14_133000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -80,12 +80,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_14_013000) do
     t.jsonb "interested_in", default: [], null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "matched_vehicle_listing_id"
+    t.bigint "matched_seller_id"
+    t.datetime "distributed_at"
     t.index ["email"], name: "index_leads_on_email"
+    t.index ["matched_seller_id"], name: "index_leads_on_matched_seller_id"
+    t.index ["matched_vehicle_listing_id"], name: "index_leads_on_matched_vehicle_listing_id"
   end
 
   create_table "negotiation_messages", force: :cascade do |t|
     t.bigint "negotiation_id", null: false
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.text "content", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -101,12 +106,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_14_013000) do
     t.datetime "accepted_at"
     t.datetime "rejected_at"
     t.bigint "seller_id", null: false
-    t.bigint "buyer_id", null: false
+    t.bigint "buyer_id"
     t.bigint "vehicle_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "vehicle_listing_id", null: false
+    t.bigint "lead_id"
+    t.string "public_access_token"
     t.index ["buyer_id"], name: "index_negotiations_on_buyer_id"
+    t.index ["lead_id"], name: "index_negotiations_on_lead_id"
+    t.index ["public_access_token"], name: "index_negotiations_on_public_access_token", unique: true
     t.index ["seller_id"], name: "index_negotiations_on_seller_id"
     t.index ["vehicle_id"], name: "index_negotiations_on_vehicle_id"
     t.index ["vehicle_listing_id"], name: "index_negotiations_on_vehicle_listing_id"
@@ -219,8 +228,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_14_013000) do
   add_foreign_key "brands", "users"
   add_foreign_key "car_models", "brands"
   add_foreign_key "car_models", "users"
+  add_foreign_key "leads", "users", column: "matched_seller_id"
+  add_foreign_key "leads", "veihcle_listings", column: "matched_vehicle_listing_id"
   add_foreign_key "negotiation_messages", "negotiations"
   add_foreign_key "negotiation_messages", "users"
+  add_foreign_key "negotiations", "leads"
   add_foreign_key "negotiations", "users", column: "buyer_id"
   add_foreign_key "negotiations", "users", column: "seller_id"
   add_foreign_key "negotiations", "vehicles"

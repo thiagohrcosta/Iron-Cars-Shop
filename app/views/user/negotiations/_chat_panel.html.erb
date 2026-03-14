@@ -1,20 +1,22 @@
 <% if selected_negotiation %>
   <% counterpart = selected_negotiation.counterpart_for(current_user) %>
   <% vehicle = selected_negotiation.vehicle %>
+  <% counterpart_name = selected_negotiation.counterpart_name_for(current_user) %>
+  <% counterpart_email = selected_negotiation.counterpart_email_for(current_user) %>
 
   <div class="inbox-chat-shell" data-controller="chat">
     <div class="chat-topbar">
       <div class="chat-contact-block">
         <div class="chat-contact-avatar">
-          <% if counterpart&.photo&.attached? %>
+          <% if counterpart&.respond_to?(:photo) && counterpart.photo&.attached? %>
             <%= image_tag counterpart.photo, alt: counterpart.full_name %>
           <% else %>
-            <%= image_tag(vehicle&.photos&.attached? ? url_for(vehicle.photos.first) : "carbanner.png", alt: counterpart&.full_name || "Contact") %>
+            <%= image_tag(vehicle&.photos&.attached? ? url_for(vehicle.photos.first) : "carbanner.png", alt: counterpart_name) %>
           <% end %>
         </div>
         <div>
-          <h2><%= counterpart&.full_name.presence || counterpart&.email || "Conversation" %></h2>
-          <p><%= selected_negotiation.vehicle&.full_name || "Vehicle ##{selected_negotiation.vehicle_id}" %></p>
+          <h2><%= counterpart_name %></h2>
+          <p><%= counterpart_email.presence || selected_negotiation.vehicle&.full_name || "Conversation" %></p>
         </div>
       </div>
 

@@ -1,0 +1,11 @@
+Hi <%= @lead.name %>,
+
+<%= @seller.full_name.presence || @seller.email %> replied about <%= @vehicle.full_name %>.
+
+Message:
+<%= @message.content %>
+
+Open your secure conversation here:
+<%= @conversation_url %>
+
+You can reply from that page without logging in.

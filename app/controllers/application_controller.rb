@@ -7,6 +7,11 @@ class ApplicationController < ActionController::Base
   protected
 
   def after_sign_in_path_for(resource)
+    link_count = link_lead_negotiations_for(resource)
+    if link_count.positive?
+      flash[:notice] = [ flash[:notice], "#{link_count} conversation#{'s' if link_count != 1} linked to your account." ].compact.join(" ")
+    end
+
     return admin_dashboard_path if resource.respond_to?(:admin?) && resource.admin?
 
     user_dashboard_path
@@ -29,5 +34,11 @@ class ApplicationController < ActionController::Base
         :address_country
       ]
     )
+  end
+
+  def link_lead_negotiations_for(resource)
+    return 0 unless resource.is_a?(User)
+
+    LeadNegotiationLinker.new(user: resource).call
   end
 end

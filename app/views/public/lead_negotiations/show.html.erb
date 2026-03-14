@@ -1,0 +1,64 @@
+<section class="negotiations-page">
+  <div class="negotiations-wrap">
+    <header class="negotiations-header">
+      <div>
+        <p class="eyebrow">Secure Lead Access</p>
+        <h1>Conversation With <%= @negotiation.seller.full_name.presence || @negotiation.seller.email %></h1>
+        <p class="subtitle">You can reply here without logging in. To submit an official offer, you will need an account.</p>
+      </div>
+      <%= link_to "Create account to make an offer", new_user_registration_path, class: "negotiations-cta" %>
+    </header>
+
+    <% if flash[:notice].present? %>
+      <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700"><%= flash[:notice] %></div>
+    <% end %>
+
+    <div class="chat-shell mt-6">
+      <div class="chat-header">
+        <div class="chat-header-main">
+          <%= image_tag(@negotiation.vehicle&.photos&.attached? ? url_for(@negotiation.vehicle.photos.first) : "carbanner.png", alt: @negotiation.vehicle.full_name) %>
+          <div>
+            <h1><%= @negotiation.vehicle.full_name %></h1>
+            <p><%= @negotiation.seller.full_name.presence || @negotiation.seller.email %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-messages">
+        <% @messages.each do |message| %>
+          <% mine = message.guest_message? %>
+          <div class="chat-bubble-row <%= mine ? "mine" : "theirs" %>">
+            <div class="chat-bubble">
+              <p class="chat-author"><%= mine ? "You" : (message.user&.full_name.presence || message.user&.email || "Seller") %></p>
+              <div class="chat-text"><%= simple_format(h(message.content), {}, wrapper_tag: "span") %></div>
+              <time class="chat-time"><%= l(message.created_at, format: :short) %></time>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="chat-form-wrap">
+        <%= form_with model: @message,
+          url: public_lead_negotiation_messages_path(@negotiation.public_access_token),
+          class: "chat-input-bar" do |f| %>
+          <%= f.text_area :content,
+            rows: 1,
+            required: true,
+            maxlength: 2000,
+            placeholder: "Reply to the seller...",
+            class: "chat-input" %>
+          <%= f.submit "Send", class: "chat-send-btn" %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h2 class="text-2xl font-bold text-slate-900">Ready to make an offer?</h2>
+      <p class="mt-2 text-slate-600">You can keep chatting here, but to submit an official offer you need a valid Iron Cars Shop account.</p>
+      <div class="mt-4 flex gap-3">
+        <%= link_to "Create account", new_user_registration_path, class: "negotiations-cta" %>
+        <%= link_to "Log in", new_user_session_path, class: "deal-chat-btn" %>
+      </div>
+    </div>
+  </div>
+</section>
