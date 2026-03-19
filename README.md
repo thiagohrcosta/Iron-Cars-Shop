@@ -1,3 +1,5 @@
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/af48828e-e076-4811-abf3-7afb28720632" />
+
 # Iron Cars Shop
 
 ## Analytics + Subscription (Stripe) setup
