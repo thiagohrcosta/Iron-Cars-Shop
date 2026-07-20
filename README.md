@@ -106,9 +106,9 @@ STRIPE_SECRET_KEY=sk_live_or_test_xxx
 STRIPE_WEBHOOK_SECRET=whsec_xxx
 ```
 
-### Produtos/preços no Stripe
+### Stripe products/prices
 
-Crie 3 preços recorrentes mensais no Stripe com as seguintes **lookup keys**:
+Create 3 monthly recurring prices in Stripe with the following **lookup keys**:
 
 - `iron_cars_pro_monthly`
 - `iron_cars_premium_monthly`
@@ -116,50 +116,44 @@ Crie 3 preços recorrentes mensais no Stripe com as seguintes **lookup keys**:
 
 ### Webhook
 
-Configure o endpoint de webhook do Stripe:
+Set up the Stripe webhook endpoint:
 
 - `POST /webhooks/stripe`
 
-Eventos recomendados:
+Recommended events:
 - `checkout.session.completed`
 - `customer.subscription.created`
 - `customer.subscription.updated`
 - `customer.subscription.deleted`
 
-### Banco de dados
+### Database
 
-Rode as migrações:
+Run the migrations:
 
 ```bash
 bin/rails db:migrate
 ```
 
-Isso cria a tabela `subscriptions` e adiciona suporte a cliente Stripe na tabela `users`.
+This creates the `subscriptions` table and adds Stripe customer support to the `users` table.
 
 ---
 
-## 🚀 Rodando localmente
+## 🚀 Running locally
 
 ```bash
-# clone o repositório
-git clone <url-do-repositorio>
+# clone the repository
+git clone <repository-url>
 cd iron-cars-shop
 
-# instale as dependências
+# install dependencies
 bundle install
 
-# configure o banco
+# set up the database
 bin/rails db:setup
 
-# rode as migrações
+# run the migrations
 bin/rails db:migrate
 
-# inicie o servidor
+# start the server
 bin/rails server
 ```
-
----
-
-## 📄 Licença
-
-Defina aqui a licença do projeto (ex: MIT).
