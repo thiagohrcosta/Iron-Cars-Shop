@@ -34,7 +34,13 @@
   }
 } %>
 
-<div class="min-h-screen bg-white flex">
+<div
+  class="min-h-screen bg-white flex"
+  data-controller="manual-lead"
+  data-action="keydown@window->manual-lead#closeOnEscape"
+  data-manual-lead-open-value="<%= @show_new_lead_modal ? "true" : "false" %>"
+  data-manual-lead-initial-tags-value="<%= (@new_lead&.interested_in || []).to_json %>"
+>
   <%= render "shared/user_sidebar" %>
 
   <div class="flex-1 bg-white">
@@ -51,7 +57,11 @@
               <span class="text-base">⌕</span>
               <span>Search...</span>
             </div>
-            <button class="rounded-2xl bg-linear-to-r from-[#4f86ff] to-[#2b5de0] px-6 py-3 text-base font-semibold shadow-lg shadow-blue-950/25 transition hover:brightness-110">
+            <button
+              type="button"
+              data-action="manual-lead#openCreate"
+              class="rounded-2xl bg-linear-to-r from-[#4f86ff] to-[#2b5de0] px-6 py-3 text-base font-semibold shadow-lg shadow-blue-950/25 transition hover:brightness-110"
+            >
               + Add Lead
             </button>
           </div>
@@ -91,12 +101,12 @@
         </div>
       <% end %>
 
-      <section class="grid grid-cols-1 gap-4 2xl:grid-cols-5 xl:grid-cols-3">
+      <section class="flex gap-5 overflow-x-auto pb-4">
         <% Lead::PIPELINE_STAGES.each do |stage| %>
           <% leads = @leads_by_stage[stage] %>
           <% meta = column_meta.fetch(stage) %>
 
-          <div class="overflow-hidden rounded-[22px] border border-slate-200 bg-[#f4f7fc]">
+          <div class="w-88 shrink-0 overflow-hidden rounded-[22px] border border-slate-200 bg-[#f4f7fc]">
             <div class="h-1.5 <%= meta[:edge] %>"></div>
 
             <div class="bg-gradient-to-r <%= meta[:tone] %> px-4 py-4 text-white">
@@ -143,24 +153,43 @@
                       <span class="font-semibold text-slate-800"><%= stage.humanize %></span>
                     </div>
 
-                    <div class="mt-4 flex flex-wrap gap-2">
+                    <div class="mt-4 flex flex-col gap-2">
                       <% if lead.distributed? %>
-                        <span class="rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
+                        <span class="rounded-full bg-emerald-50 px-3 py-1.5 text-center text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
                           Matched
                         </span>
                       <% else %>
-                        <%= button_to "Distribute with AI",
-                              distribute_admin_lead_path(lead),
-                              method: :post,
-                              class: "rounded-full bg-blue-600 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-white transition hover:bg-blue-700" %>
+                        <div class="flex gap-2">
+                          <%= button_to "Distribute with AI",
+                                distribute_admin_lead_path(lead),
+                                method: :post,
+                                form: { class: "flex-1", data: { turbo: false } },
+                                class: "w-full rounded-full bg-blue-600 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-white transition hover:bg-blue-700" %>
+                          <button
+                            type="button"
+                            data-action="manual-lead#openEdit"
+                            data-lead-name="<%= lead.name %>"
+                            data-lead-email="<%= lead.email %>"
+                            data-lead-phone="<%= lead.phone %>"
+                            data-lead-interested-in="<%= lead.interested_in.to_json %>"
+                            data-lead-source-label="<%= lead.source.humanize %>"
+                            data-lead-update-url="<%= admin_lead_path(lead) %>"
+                            class="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
+                          >
+                            Edit
+                          </button>
+                        </div>
                       <% end %>
 
-                      <% Lead.statuses.keys.reject { |value| value == lead.status }.each do |target_status| %>
-                        <%= button_to target_status.humanize,
-                              update_status_admin_lead_path(lead, status: target_status),
-                              method: :patch,
-                              class: "rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-600 transition hover:border-slate-300 hover:bg-slate-50" %>
-                      <% end %>
+                      <div class="grid grid-cols-3 gap-2">
+                        <% Lead.statuses.keys.reject { |value| value == lead.status }.each do |target_status| %>
+                          <%= button_to target_status.humanize,
+                                update_status_admin_lead_path(lead, status: target_status),
+                                method: :patch,
+                                form: { class: "contents" },
+                                class: "w-full rounded-full border border-slate-200 bg-white px-2 py-1.5 text-center text-[11px] font-semibold uppercase tracking-wide text-slate-600 transition hover:border-slate-300 hover:bg-slate-50" %>
+                        <% end %>
+                      </div>
                     </div>
 
                     <% if lead.distributed? && lead.matched_vehicle_listing.present? %>
@@ -199,4 +228,177 @@
       </section>
     </main>
   </div>
+
+  <div data-manual-lead-target="modal" class="fixed inset-0 z-[120] bg-slate-950/60 px-4 py-8" hidden>
+    <div class="mx-auto max-w-2xl rounded-[28px] bg-white shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">Admin Lead Entry</p>
+          <h2 data-manual-lead-target="title" class="mt-1 text-3xl font-bold text-slate-900">Create Manual Lead</h2>
+        </div>
+        <button type="button" data-action="manual-lead#close" class="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">
+          Close
+        </button>
+      </div>
+
+      <%= form_with model: @new_lead, url: admin_leads_path, method: :post, class: "space-y-6 px-6 py-6", data: { manual_lead_target: "form", create_url: admin_leads_path } do |f| %>
+        <input type="hidden" name="_method" value="post" data-manual-lead-target="method">
+        <% if @new_lead.errors.any? %>
+          <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <strong>Please review the lead details.</strong>
+            <div class="mt-2"><%= @new_lead.errors.full_messages.to_sentence %></div>
+          </div>
+        <% end %>
+
+        <div class="grid gap-5 md:grid-cols-2">
+          <div>
+            <%= f.label :name, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+            <%= f.text_field :name, required: true, class: "w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900", data: { manual_lead_target: "name" } %>
+          </div>
+
+          <div>
+            <%= f.label :email, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+            <%= f.email_field :email, required: true, class: "w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900", data: { manual_lead_target: "email" } %>
+          </div>
+        </div>
+
+        <div class="grid gap-5 md:grid-cols-2">
+          <div>
+            <%= f.label :phone, class: "mb-2 block text-sm font-semibold text-slate-700" %>
+            <%= f.telephone_field :phone, class: "w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900", data: { manual_lead_target: "phone" } %>
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-semibold text-slate-700">Source</label>
+            <div data-manual-lead-target="sourceLabel" class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 font-semibold text-emerald-700">
+              Referral
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-semibold text-slate-700">Interested In</label>
+          <div class="rounded-[24px] border border-slate-300 bg-slate-50 p-4">
+            <div class="flex gap-3">
+              <input
+                type="text"
+                data-manual-lead-target="input"
+                data-action="input->manual-lead#updateDraft keydown->manual-lead#maybeAddTag"
+                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900"
+                placeholder="Ex: brand:BMW, model:M4, city:New York"
+              >
+              <button
+                type="button"
+                data-action="manual-lead#addCurrentTag"
+                class="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white"
+              >
+                Add
+              </button>
+            </div>
+
+            <div data-manual-lead-target="preview" class="mt-3 rounded-2xl border border-dashed border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700" hidden></div>
+            <div data-manual-lead-target="tags" class="mt-4 flex flex-wrap gap-2"></div>
+            <div data-manual-lead-target="hiddenInputs"></div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 border-t border-slate-200 pt-4">
+          <button type="button" data-action="manual-lead#close" class="rounded-2xl border border-slate-200 px-5 py-3 font-semibold text-slate-600 hover:bg-slate-50">
+            Cancel
+          </button>
+          <%= f.submit "Create Lead", class: "rounded-2xl bg-linear-to-r from-[#4f86ff] to-[#2b5de0] px-6 py-3 font-semibold text-white shadow-lg shadow-blue-950/20", data: { manual_lead_target: "submit" } %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @show_distribution_modal && @distribution_recommendation.present? %>
+    <% suggested_listing = @distribution_recommendation.listing %>
+    <div class="fixed inset-0 z-[130] bg-slate-950/70 px-4 py-8">
+      <div class="mx-auto max-w-[54rem] rounded-[24px] bg-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-amber-600">AI Review Required</p>
+            <h2 class="mt-1 text-[2rem] font-bold leading-tight text-slate-900">Confirm Suggested Match</h2>
+            <p class="mt-1.5 max-w-2xl text-sm text-slate-500"><%= @distribution_recommendation.message %></p>
+          </div>
+          <%= link_to "Close", admin_leads_path(anchor: "lead_#{@distribution_recommendation.lead.id}"), class: "rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50" %>
+        </div>
+
+        <div class="grid gap-4 px-5 py-5 lg:grid-cols-[1.2fr,0.8fr]">
+          <div class="rounded-[22px] border border-slate-200 bg-slate-50 p-4">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Suggested listing</p>
+                <h3 class="mt-2 text-[2.1rem] font-bold leading-tight text-slate-900"><%= suggested_listing.vehicle.full_name %></h3>
+                <p class="mt-2 text-base text-slate-500">
+                  Seller: <%= suggested_listing.seller.full_name.presence || suggested_listing.seller.email %>
+                  <% if suggested_listing.seller.address_city.present? || suggested_listing.seller.address_state.present? %>
+                    • <%= [suggested_listing.seller.address_city, suggested_listing.seller.address_state].compact.join(", ") %>
+                  <% end %>
+                </p>
+              </div>
+              <div class="rounded-2xl bg-amber-50 px-4 py-3 text-center">
+                <div class="text-xs font-semibold uppercase tracking-[0.16em] text-amber-700">Match score</div>
+                <div class="mt-1 text-3xl font-bold text-amber-900"><%= @distribution_recommendation.score %></div>
+              </div>
+            </div>
+
+            <div class="mt-4 rounded-2xl border border-blue-100 bg-white px-4 py-3 text-sm text-slate-700">
+              <div class="flex items-center justify-between gap-3">
+                <span><strong>Price:</strong> <%= number_to_currency(suggested_listing.vehicle.price_cents / 100.0) %></span>
+                <span><strong>Year:</strong> <%= suggested_listing.vehicle.year %></span>
+              </div>
+              <div class="mt-2 flex items-center justify-between gap-3">
+                <span><strong>Brand:</strong> <%= suggested_listing.vehicle.brand&.name || "N/A" %></span>
+                <span><strong>Model:</strong> <%= suggested_listing.vehicle.car_model.name %></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="rounded-[22px] border border-emerald-200 bg-emerald-50 p-4">
+              <p class="text-sm font-semibold uppercase tracking-[0.16em] text-emerald-700">What matched</p>
+              <ul class="mt-3 space-y-2 text-sm text-emerald-900">
+                <% @distribution_recommendation.matched_preferences.each do |item| %>
+                  <li>• <%= item %></li>
+                <% end %>
+              </ul>
+            </div>
+
+            <div class="rounded-[22px] border border-amber-200 bg-amber-50 p-4">
+              <p class="text-sm font-semibold uppercase tracking-[0.16em] text-amber-700">Tradeoffs</p>
+              <% if @distribution_recommendation.tradeoffs.any? %>
+                <ul class="mt-3 space-y-2 text-sm text-amber-900">
+                  <% @distribution_recommendation.tradeoffs.each do |item| %>
+                    <li>• <%= item %></li>
+                  <% end %>
+                </ul>
+              <% else %>
+                <p class="mt-3 text-sm text-amber-900">No major tradeoffs detected. This only needs manual confirmation because the score did not reach the auto-distribution threshold.</p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-200 px-5 py-4">
+          <%= link_to "Keep Lead Unassigned", admin_leads_path(anchor: "lead_#{@distribution_recommendation.lead.id}"), class: "rounded-2xl border border-slate-200 px-5 py-3 font-semibold text-slate-600 hover:bg-slate-50" %>
+
+          <% if @distribution_recommendation.strategy != "expanded" %>
+            <%= button_to "Try Broader Search",
+                  retry_distribution_admin_lead_path(@distribution_recommendation.lead),
+                  method: :post,
+                  form: { data: { turbo: false } },
+                  class: "rounded-2xl border border-blue-200 bg-blue-50 px-5 py-3 font-semibold text-blue-700 hover:bg-blue-100" %>
+          <% end %>
+
+          <%= button_to "Confirm and Distribute",
+                confirm_distribution_admin_lead_path(@distribution_recommendation.lead, listing_id: suggested_listing.id),
+                method: :post,
+                form: { data: { turbo: false } },
+                class: "rounded-2xl bg-linear-to-r from-[#4f86ff] to-[#2b5de0] px-6 py-3 font-semibold text-white shadow-lg shadow-blue-950/20" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>

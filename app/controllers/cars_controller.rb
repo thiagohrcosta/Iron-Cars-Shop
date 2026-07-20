@@ -1,8 +1,8 @@
-require 'digest'
+require "digest"
 
 class CarsController < ApplicationController
   def index
-    # We build the base query. We DO NOT use .includes() here because it causes massive memory 
+    # We build the base query. We DO NOT use .includes() here because it causes massive memory
     # overhead for .count and forces implicit cross-joins when we .pluck(:id) later.
     @vehicles_query = Vehicle.published_on_marketplace
 
@@ -40,13 +40,13 @@ class CarsController < ApplicationController
     # Fast Numbered Pagination (Deferred Join technique):
     # Standard LIMIT/OFFSET gets slow on large tables because it fetches and discards huge rows.
     # We solve this by first fetchingONLY the IDs via the primary key index.
-    @current_page = [params[:page].to_i, 1].max
+    @current_page = [ params[:page].to_i, 1 ].max
     @vehicles_per_page = 9
     @total_pages = (@total_vehicles_count / @vehicles_per_page.to_f).ceil
 
     offset_value = (@current_page - 1) * @vehicles_per_page
     vehicle_ids = @vehicles_query.order("vehicles.id DESC").offset(offset_value).limit(@vehicles_per_page).pluck("vehicles.id")
-    
+
     @vehicles = if vehicle_ids.any?
       Vehicle.published_on_marketplace
         .includes(:vehicle_features, car_model: :brand, photos_attachments: :blob)
