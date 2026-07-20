@@ -101,12 +101,12 @@
         </div>
       <% end %>
 
-      <section class="grid grid-cols-1 gap-4 2xl:grid-cols-5 xl:grid-cols-3">
+      <section class="flex gap-5 overflow-x-auto pb-4">
         <% Lead::PIPELINE_STAGES.each do |stage| %>
           <% leads = @leads_by_stage[stage] %>
           <% meta = column_meta.fetch(stage) %>
 
-          <div class="overflow-hidden rounded-[22px] border border-slate-200 bg-[#f4f7fc]">
+          <div class="w-88 shrink-0 overflow-hidden rounded-[22px] border border-slate-200 bg-[#f4f7fc]">
             <div class="h-1.5 <%= meta[:edge] %>"></div>
 
             <div class="bg-gradient-to-r <%= meta[:tone] %> px-4 py-4 text-white">
@@ -153,38 +153,43 @@
                       <span class="font-semibold text-slate-800"><%= stage.humanize %></span>
                     </div>
 
-                    <div class="mt-4 flex flex-wrap gap-2">
+                    <div class="mt-4 flex flex-col gap-2">
                       <% if lead.distributed? %>
-                        <span class="rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
+                        <span class="rounded-full bg-emerald-50 px-3 py-1.5 text-center text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
                           Matched
                         </span>
                       <% else %>
-                        <%= button_to "Distribute with AI",
-                              distribute_admin_lead_path(lead),
-                              method: :post,
-                              form: { data: { turbo: false } },
-                              class: "rounded-full bg-blue-600 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-white transition hover:bg-blue-700" %>
-                        <button
-                          type="button"
-                          data-action="manual-lead#openEdit"
-                          data-lead-name="<%= lead.name %>"
-                          data-lead-email="<%= lead.email %>"
-                          data-lead-phone="<%= lead.phone %>"
-                          data-lead-interested-in="<%= lead.interested_in.to_json %>"
-                          data-lead-source-label="<%= lead.source.humanize %>"
-                          data-lead-update-url="<%= admin_lead_path(lead) %>"
-                          class="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
-                        >
-                          Edit Lead
-                        </button>
+                        <div class="flex gap-2">
+                          <%= button_to "Distribute with AI",
+                                distribute_admin_lead_path(lead),
+                                method: :post,
+                                form: { class: "flex-1", data: { turbo: false } },
+                                class: "w-full rounded-full bg-blue-600 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-white transition hover:bg-blue-700" %>
+                          <button
+                            type="button"
+                            data-action="manual-lead#openEdit"
+                            data-lead-name="<%= lead.name %>"
+                            data-lead-email="<%= lead.email %>"
+                            data-lead-phone="<%= lead.phone %>"
+                            data-lead-interested-in="<%= lead.interested_in.to_json %>"
+                            data-lead-source-label="<%= lead.source.humanize %>"
+                            data-lead-update-url="<%= admin_lead_path(lead) %>"
+                            class="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
+                          >
+                            Edit
+                          </button>
+                        </div>
                       <% end %>
 
-                      <% Lead.statuses.keys.reject { |value| value == lead.status }.each do |target_status| %>
-                        <%= button_to target_status.humanize,
-                              update_status_admin_lead_path(lead, status: target_status),
-                              method: :patch,
-                              class: "rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-600 transition hover:border-slate-300 hover:bg-slate-50" %>
-                      <% end %>
+                      <div class="grid grid-cols-3 gap-2">
+                        <% Lead.statuses.keys.reject { |value| value == lead.status }.each do |target_status| %>
+                          <%= button_to target_status.humanize,
+                                update_status_admin_lead_path(lead, status: target_status),
+                                method: :patch,
+                                form: { class: "contents" },
+                                class: "w-full rounded-full border border-slate-200 bg-white px-2 py-1.5 text-center text-[11px] font-semibold uppercase tracking-wide text-slate-600 transition hover:border-slate-300 hover:bg-slate-50" %>
+                        <% end %>
+                      </div>
                     </div>
 
                     <% if lead.distributed? && lead.matched_vehicle_listing.present? %>
