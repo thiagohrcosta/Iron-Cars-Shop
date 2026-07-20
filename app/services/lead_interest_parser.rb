@@ -75,7 +75,7 @@ class LeadInterestParser
         next unless budget.positive?
 
         filters[:budget] = budget
-        filters[:min_price] ||= [(budget * 0.9).floor, 0].max
+        filters[:min_price] ||= [ (budget * 0.9).floor, 0 ].max
         filters[:max_price] ||= (budget * 1.1).ceil
       when "city"
         filters[:city] = value
@@ -110,7 +110,7 @@ class LeadInterestParser
 
     if raw.include?(":")
       key, value = raw.split(":", 2)
-      [key.to_s.strip.downcase, value.to_s.strip]
+      [ key.to_s.strip.downcase, value.to_s.strip ]
     else
       infer_freeform_entry(raw)
     end

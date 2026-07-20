@@ -14,8 +14,7 @@ class LeadChatMessagesControllerTest < ActionDispatch::IntegrationTest
           "phone" => nil,
           "interested_in" => [ "Fiat", "2025", "New York" ]
         },
-        session_state: {
-        }
+        session_state: {}
       }
     end
   end

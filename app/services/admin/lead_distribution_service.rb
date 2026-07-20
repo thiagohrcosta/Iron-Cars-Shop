@@ -271,9 +271,9 @@ module Admin
         listing: nil,
         message: if strategy.to_sym == :expanded
           "Even after widening the search, no reasonable match was found for #{@lead.name}."
-        else
+                 else
           "No strong automatic match was found for #{@lead.name}. Try the broader search suggestion flow."
-        end
+                 end
       )
     end
   end
