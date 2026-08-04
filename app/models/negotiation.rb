@@ -46,8 +46,7 @@ class Negotiation < ApplicationRecord
   def unread_messages_count_for(user)
     return 0 unless buyer?(user) || seller?(user)
 
-    messages = messages_unread_by(user)
-    negotiation_messages.loaded? ? messages.count : messages.count
+    messages_unread_by(user).count
   end
 
   def unread_for?(user)
@@ -61,7 +60,16 @@ class Negotiation < ApplicationRecord
   end
 
   def self.unread_count_for(user)
-    for_user(user).sum { |negotiation| negotiation.unread_messages_count_for(user) }
+    NegotiationMessage
+      .joins(:negotiation)
+      .merge(for_user(user))
+      .where("negotiation_messages.user_id IS NULL OR negotiation_messages.user_id != :user_id", user_id: user.id)
+      .where(
+        "(negotiations.buyer_id = :user_id AND (negotiations.buyer_last_read_at IS NULL OR negotiation_messages.created_at > negotiations.buyer_last_read_at)) OR " \
+        "(negotiations.seller_id = :user_id AND (negotiations.seller_last_read_at IS NULL OR negotiation_messages.created_at > negotiations.seller_last_read_at))",
+        user_id: user.id
+      )
+      .count
   end
 
   def ensure_public_access_token!

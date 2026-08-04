@@ -37,10 +37,9 @@ class NegotiationMessage < ApplicationRecord
 
   def notify_account_participants_if_needed
     account_recipients.each do |recipient|
-      next if notification_throttled_for?(recipient)
+      next unless claim_notification_slot_for(recipient)
 
-      mark_notified_for!(recipient)
-      NegotiationMailer.new_message_notification(self, recipient).deliver_now
+      NegotiationMailer.new_message_notification(self, recipient).deliver_later
     end
   end
 
@@ -50,13 +49,16 @@ class NegotiationMessage < ApplicationRecord
     end
   end
 
-  def notification_throttled_for?(recipient)
-    last_notified_at = negotiation.public_send(last_notified_column_for(recipient))
-    last_notified_at.present? && last_notified_at > 30.minutes.ago
-  end
+  # Atomically claims the throttle slot: only one concurrent caller will see
+  # rows_affected > 0, so at most one email goes out per 30-minute window.
+  def claim_notification_slot_for(recipient)
+    column = last_notified_column_for(recipient)
 
-  def mark_notified_for!(recipient)
-    negotiation.update_column(last_notified_column_for(recipient), Time.current)
+    rows_affected = Negotiation.where(id: negotiation_id)
+      .where("#{column} IS NULL OR #{column} < ?", 30.minutes.ago)
+      .update_all(column => Time.current)
+
+    rows_affected.positive?
   end
 
   def last_notified_column_for(recipient)
