@@ -9,7 +9,7 @@
 - Out of scope:
 
 ## Acceptance Criteria
-- [ ] 
+- [ ] ...
 
 ## Testing
 - [ ] Added or updated tests as needed
