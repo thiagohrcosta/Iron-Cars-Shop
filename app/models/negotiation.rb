@@ -43,6 +43,35 @@ class Negotiation < ApplicationRecord
     counterpart&.email || lead&.email
   end
 
+  def unread_messages_count_for(user)
+    return 0 unless buyer?(user) || seller?(user)
+
+    messages_unread_by(user).count
+  end
+
+  def unread_for?(user)
+    unread_messages_count_for(user).positive?
+  end
+
+  def mark_read_for!(user, at: Time.current)
+    return unless buyer?(user) || seller?(user)
+
+    update_column(last_read_column_for(user), at)
+  end
+
+  def self.unread_count_for(user)
+    NegotiationMessage
+      .joins(:negotiation)
+      .merge(for_user(user))
+      .where("negotiation_messages.user_id IS NULL OR negotiation_messages.user_id != :user_id", user_id: user.id)
+      .where(
+        "(negotiations.buyer_id = :user_id AND (negotiations.buyer_last_read_at IS NULL OR negotiation_messages.created_at > negotiations.buyer_last_read_at)) OR " \
+        "(negotiations.seller_id = :user_id AND (negotiations.seller_last_read_at IS NULL OR negotiation_messages.created_at > negotiations.seller_last_read_at))",
+        user_id: user.id
+      )
+      .count
+  end
+
   def ensure_public_access_token!
     regenerate_public_access_token if public_access_token.blank?
     public_access_token
@@ -91,6 +120,20 @@ class Negotiation < ApplicationRecord
   end
 
   private
+
+  def messages_unread_by(user)
+    read_at = public_send(last_read_column_for(user))
+
+    scope = negotiation_messages.reject { |message| message.user_id == user.id } if negotiation_messages.loaded?
+    return scope.select { |message| read_at.blank? || message.created_at > read_at } if negotiation_messages.loaded?
+
+    scope = negotiation_messages.where("user_id IS NULL OR user_id != ?", user.id)
+    read_at.present? ? scope.where("created_at > ?", read_at) : scope
+  end
+
+  def last_read_column_for(user)
+    buyer?(user) ? :buyer_last_read_at : :seller_last_read_at
+  end
 
   def offer_message?(message)
     message.content.to_s.start_with?("Offer submitted:")

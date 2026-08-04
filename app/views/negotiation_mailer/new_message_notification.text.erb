@@ -1,0 +1,8 @@
+Hi <%= @recipient.full_name.presence || @recipient.email %>,
+
+<%= @sender_name %> sent a new message about <%= @negotiation.vehicle&.full_name || "your negotiation" %>:
+
+<%= @message.content %>
+
+Open your inbox to reply:
+<%= user_negotiation_url(@negotiation) %>

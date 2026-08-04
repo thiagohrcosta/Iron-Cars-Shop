@@ -18,6 +18,7 @@ class NegotiationMessage < ApplicationRecord
 
   after_create_commit :broadcast_to_participants
   after_create_commit :notify_lead_if_needed
+  after_create_commit :notify_account_participants_if_needed
 
   private
 
@@ -32,6 +33,36 @@ class NegotiationMessage < ApplicationRecord
         locals: { message: self, current_user_id: participant_id }
       )
     end
+  end
+
+  def notify_account_participants_if_needed
+    account_recipients.each do |recipient|
+      next unless claim_notification_slot_for(recipient)
+
+      NegotiationMailer.new_message_notification(self, recipient).deliver_later
+    end
+  end
+
+  def account_recipients
+    [ negotiation.buyer, negotiation.seller ].compact.select do |participant|
+      participant.id != user_id && participant.email.present?
+    end
+  end
+
+  # Atomically claims the throttle slot: only one concurrent caller will see
+  # rows_affected > 0, so at most one email goes out per 30-minute window.
+  def claim_notification_slot_for(recipient)
+    column = last_notified_column_for(recipient)
+
+    rows_affected = Negotiation.where(id: negotiation_id)
+      .where("#{column} IS NULL OR #{column} < ?", 30.minutes.ago)
+      .update_all(column => Time.current)
+
+    rows_affected.positive?
+  end
+
+  def last_notified_column_for(recipient)
+    negotiation.buyer?(recipient) ? :buyer_last_notified_at : :seller_last_notified_at
   end
 
   def notify_lead_if_needed

@@ -1,0 +1,7 @@
+<section style="font-family: Arial, sans-serif; color: #163360;">
+  <h1 style="margin: 0 0 16px; font-size: 24px;">You have a new negotiation message</h1>
+  <p>Hi <%= @recipient.full_name.presence || @recipient.email %>,</p>
+  <p><strong><%= @sender_name %></strong> sent a new message about <strong><%= @negotiation.vehicle&.full_name || "your negotiation" %></strong>.</p>
+  <blockquote style="margin: 16px 0; padding: 12px 16px; border-left: 4px solid #2f7bf2; background: #f4f7fb; white-space: pre-wrap;"><%= @message.content %></blockquote>
+  <p><%= link_to "Open your inbox", user_negotiation_url(@negotiation), style: "display: inline-block; padding: 10px 16px; border-radius: 8px; background: #2f7bf2; color: #ffffff; text-decoration: none;" %></p>
+</section>
