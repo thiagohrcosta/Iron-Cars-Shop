@@ -3,6 +3,7 @@
 <% vehicle = negotiation.vehicle %>
 <% active = local_assigns[:selected_negotiation]&.id == negotiation.id %>
 <% counterpart_name = negotiation.counterpart_name_for(current_user) %>
+<% unread_count = negotiation.unread_messages_count_for(current_user) %>
 
 <%= link_to user_negotiation_path(negotiation), class: "conversation-item #{'active' if active}" do %>
   <div class="conversation-avatar">
@@ -22,7 +23,9 @@
     <p class="conversation-preview"><%= truncate(last_message&.content || "Vehicle information shared.", length: 58) %></p>
   </div>
 
-  <% if negotiation.vehicle_listing&.sold_visible? %>
+  <% if unread_count.positive? %>
+    <span class="conversation-flag unread"><%= unread_count %> new</span>
+  <% elsif negotiation.vehicle_listing&.sold_visible? %>
     <span class="conversation-flag sold">Sold</span>
   <% elsif negotiation.offer_active? && negotiation.seller?(current_user) %>
     <span class="conversation-flag offer">Offer</span>

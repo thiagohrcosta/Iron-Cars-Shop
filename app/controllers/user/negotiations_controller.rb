@@ -10,7 +10,7 @@ class User::NegotiationsController < ApplicationController
 
   def show
     @selected_negotiation = @negotiation
-    prepare_selected_negotiation
+    prepare_selected_negotiation(mark_read: true)
     render :index
   end
 
@@ -138,10 +138,11 @@ class User::NegotiationsController < ApplicationController
     @negotiation = Negotiation.for_user(current_user).find(params[:id])
   end
 
-  def prepare_selected_negotiation
+  def prepare_selected_negotiation(mark_read: false)
     return unless @selected_negotiation
 
     @messages = @selected_negotiation.negotiation_messages.includes(:user).order(:created_at)
+    @selected_negotiation.mark_read_for!(current_user) if mark_read
     @message = @selected_negotiation.negotiation_messages.build
   end
 

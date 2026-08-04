@@ -859,3 +859,8 @@
     font-size: 1.45rem;
   }
 }
+
+.conversation-flag.unread {
+  color: #ffffff;
+  background: #e3342f;
+}

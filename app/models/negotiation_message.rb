@@ -18,6 +18,7 @@ class NegotiationMessage < ApplicationRecord
 
   after_create_commit :broadcast_to_participants
   after_create_commit :notify_lead_if_needed
+  after_create_commit :notify_account_participants_if_needed
 
   private
 
@@ -32,6 +33,34 @@ class NegotiationMessage < ApplicationRecord
         locals: { message: self, current_user_id: participant_id }
       )
     end
+  end
+
+  def notify_account_participants_if_needed
+    account_recipients.each do |recipient|
+      next if notification_throttled_for?(recipient)
+
+      mark_notified_for!(recipient)
+      NegotiationMailer.new_message_notification(self, recipient).deliver_now
+    end
+  end
+
+  def account_recipients
+    [ negotiation.buyer, negotiation.seller ].compact.select do |participant|
+      participant.id != user_id && participant.email.present?
+    end
+  end
+
+  def notification_throttled_for?(recipient)
+    last_notified_at = negotiation.public_send(last_notified_column_for(recipient))
+    last_notified_at.present? && last_notified_at > 30.minutes.ago
+  end
+
+  def mark_notified_for!(recipient)
+    negotiation.update_column(last_notified_column_for(recipient), Time.current)
+  end
+
+  def last_notified_column_for(recipient)
+    negotiation.buyer?(recipient) ? :buyer_last_notified_at : :seller_last_notified_at
   end
 
   def notify_lead_if_needed
