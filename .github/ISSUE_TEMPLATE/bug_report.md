@@ -27,7 +27,7 @@ Describe what actually happened.
 ## Acceptance Criteria
 - [ ] Bug is reproducible
 - [ ] Root cause is identified
-- [ ] Fix behavior is verified
+- [ ] Fix is verified
 
 ## CI Gates to Expect
 This repository CI runs: `scan_ruby`, `scan_js`, `lint`, `test`.
