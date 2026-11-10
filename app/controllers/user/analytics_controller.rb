@@ -142,7 +142,7 @@ class User::AnalyticsController < ApplicationController
     }.fetch(key, key)
   end
 
-  # The day the deal closed. expires_at is only how long the listing stays visible as SOLD.
+  # expires_at only controls how long the SOLD badge stays visible; sold_at is when the deal closed.
   def listing_reference_date(listing)
     listing&.sold_at&.to_date
   end

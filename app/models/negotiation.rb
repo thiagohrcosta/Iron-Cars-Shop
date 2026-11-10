@@ -77,6 +77,17 @@ class Negotiation < ApplicationRecord
     public_access_token
   end
 
+  def accept!(by:, at: Time.current)
+    transaction do
+      update!(status: "accepted", accepted_by_seller: true, accepted_at: at)
+      vehicle_listing.mark_sold!(at: at)
+      negotiation_messages.create!(
+        user: by,
+        content: "Offer accepted. Vehicle marked as SOLD for #{VehicleListing::SOLD_BADGE_DURATION.in_days.to_i} days."
+      )
+    end
+  end
+
   def offer_active?
     pending? && accepted_by_buyer? && !accepted_by_seller?
   end

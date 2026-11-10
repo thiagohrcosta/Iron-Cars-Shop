@@ -83,25 +83,7 @@ class User::NegotiationsController < ApplicationController
       return
     end
 
-    Negotiation.transaction do
-      @negotiation.update!(
-        status: "accepted",
-        accepted_by_seller: true,
-        accepted_at: Time.current
-      )
-
-      sold_at = Time.current
-      @negotiation.vehicle_listing.update!(
-        status: "sold",
-        sold_at: sold_at,
-        expires_at: sold_at + 30.days
-      )
-
-      @negotiation.negotiation_messages.create!(
-        user: current_user,
-        content: "Offer accepted. Vehicle marked as SOLD for 30 days."
-      )
-    end
+    @negotiation.accept!(by: current_user)
 
     broadcast_negotiation_meta_to_participants(@negotiation)
     redirect_to user_negotiation_path(@negotiation), notice: "Offer accepted successfully."
