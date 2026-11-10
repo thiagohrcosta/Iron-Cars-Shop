@@ -14,8 +14,8 @@ class VehicleListing < ApplicationRecord
 
   validates :status, presence: true
 
-  def mark_sold!(at: Time.current)
-    update!(status: "sold", sold_at: at, expires_at: at + SOLD_BADGE_DURATION)
+  def mark_sold!(at: Time.current, price_cents: vehicle.price_cents)
+    update!(status: "sold", sold_at: at, sold_price_cents: price_cents, expires_at: at + SOLD_BADGE_DURATION)
   end
 
   def sold_visible?

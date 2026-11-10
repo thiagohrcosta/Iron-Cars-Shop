@@ -224,6 +224,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_120000) do
     t.integer "views_count", default: 0, null: false
     t.boolean "featured", default: false, null: false
     t.datetime "sold_at"
+    t.bigint "sold_price_cents"
+    t.index ["seller_id", "sold_at"], name: "index_veihcle_listings_on_seller_id_and_sold_at"
     t.index ["seller_id"], name: "index_veihcle_listings_on_seller_id"
     t.index ["vehicle_id"], name: "index_veihcle_listings_on_vehicle_id"
   end

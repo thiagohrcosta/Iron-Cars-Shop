@@ -39,4 +39,29 @@ class User::NegotiationsControllerTest < ActionDispatch::IntegrationTest
     assert @negotiation.reload.unread_for?(@buyer)
   end
 
+  test "create opens a negotiation at the asking price with the vehicle summary" do
+    other_vehicle = create_vehicle(@seller, price_cents: 4_200_000, mileage: 12_345)
+    other_listing = VehicleListing.create!(vehicle: other_vehicle, seller: @seller, status: :published)
+    sign_in @buyer
+
+    assert_difference("Negotiation.count", 1) do
+      post user_negotiations_url, params: { negotiation: { vehicle_listing_id: other_listing.id } }
+    end
+
+    negotiation = Negotiation.order(:created_at).last
+    assert_redirected_to user_negotiation_url(negotiation)
+    assert_equal [ @buyer, @seller, 4_200_000 ], [ negotiation.buyer, negotiation.seller, negotiation.price_cents.to_i ]
+    assert_match(/\AVehicle information: .+ Listed price \$42,000\. 12,345 miles/, negotiation.negotiation_messages.sole.content)
+  end
+
+  test "create refuses a negotiation on your own vehicle" do
+    sign_in @seller
+
+    assert_no_difference("Negotiation.count") do
+      post user_negotiations_url, params: { negotiation: { vehicle_listing_id: @listing.id } }
+    end
+
+    assert_redirected_to car_url(@vehicle)
+    assert_equal "You cannot negotiate your own vehicle.", flash[:alert]
+  end
 end

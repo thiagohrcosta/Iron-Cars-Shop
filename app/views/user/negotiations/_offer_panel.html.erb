@@ -7,7 +7,7 @@
   <% if negotiation.vehicle_listing&.sold_visible? %>
     <div class="offer-panel-state sold-state">
       <strong>Vehicle sold</strong>
-      <p>This listing is marked as sold and will remain visible for 30 days.</p>
+      <p>This listing is marked as sold and will remain visible for <%= pluralize(VehicleListing::SOLD_BADGE_DURATION.in_days.to_i, "day") %>.</p>
     </div>
   <% elsif negotiation.accepted? %>
     <div class="offer-panel-state success-state">
@@ -30,8 +30,8 @@
         <p>The buyer offered <%= number_to_currency((negotiation.price_cents || 0) / 100.0, precision: 0) %>. Listed price: <%= number_to_currency(listed_price / 100.0, precision: 0) %>.</p>
       </div>
       <div class="offer-panel-actions">
-        <%= button_to "Accept", accept_offer_user_negotiation_path(negotiation), method: :patch, class: "offer-action-btn accept" %>
-        <%= button_to "Reject", reject_offer_user_negotiation_path(negotiation), method: :patch, class: "offer-action-btn reject" %>
+        <%= button_to "Accept", user_negotiation_acceptance_path(negotiation), class: "offer-action-btn accept" %>
+        <%= button_to "Reject", user_negotiation_rejection_path(negotiation), class: "offer-action-btn reject" %>
       </div>
     </div>
   <% elsif seller_view %>
@@ -56,13 +56,13 @@
           <% end %>
         </p>
       </div>
-      <%= form_with url: make_offer_user_negotiation_path(negotiation), method: :post, class: "offer-form" do |f| %>
+      <%= form_with url: user_negotiation_offer_path(negotiation), class: "offer-form" do |f| %>
         <%= f.number_field :offer_price,
             value: ((negotiation.price_cents || listed_price) / 100.0),
             min: 1,
-            step: 100,
+            step: "any",
             class: "offer-price-input" %>
-        <%= f.submit "FAZER OFERTA", class: "offer-submit-btn" %>
+        <%= f.submit "MAKE OFFER", class: "offer-submit-btn" %>
       <% end %>
     </div>
   <% else %>
