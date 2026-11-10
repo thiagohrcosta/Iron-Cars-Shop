@@ -2,6 +2,7 @@ require "test_helper"
 
 class NegotiationUnreadTest < ActiveSupport::TestCase
   include ActiveJob::TestHelper
+  include ActionMailer::TestHelper
 
   setup do
     @buyer = create_user("buyer-unread@example.com", "Buyer Unread")

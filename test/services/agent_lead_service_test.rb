@@ -72,4 +72,25 @@ class AgentLeadServiceTest < ActiveSupport::TestCase
       assert_not_equal({}, result[:session_state])
     end
   end
+
+  test "creates a lead when the visitor confirms with a short affirmative reply" do
+    service = AgentLeadService.new(message: "Yes, correct.", state: {}, client: FakeClient.new)
+
+    assert_difference("Lead.count", 1) do
+      assert_equal true, service.call[:lead_created]
+    end
+  end
+
+  test "does not treat closing tokens inside other words as confirmation" do
+    # "looking" contains "ok" and "Brooklyn" contains "ok"; neither is a confirmation.
+    service = AgentLeadService.new(
+      message: "I'm looking for a Fiat in Brooklyn",
+      state: {},
+      client: PrematureCloseClient.new
+    )
+
+    assert_no_difference("Lead.count") do
+      assert_equal false, service.call[:lead_created]
+    end
+  end
 end

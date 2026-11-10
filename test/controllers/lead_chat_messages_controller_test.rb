@@ -20,7 +20,9 @@ class LeadChatMessagesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "returns the assistant payload" do
-    AgentLeadService.stub(:new, FakeService.new) do
+    # FakeService responds to #call, so wrap it: Minitest#stub would otherwise invoke it with the constructor args.
+    fake_service = FakeService.new
+    AgentLeadService.stub(:new, ->(**) { fake_service }) do
       post lead_chat_messages_path, params: { message: "I want a Fiat" }, as: :json
     end
 
