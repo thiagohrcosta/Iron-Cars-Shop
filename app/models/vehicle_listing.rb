@@ -10,7 +10,13 @@ class VehicleListing < ApplicationRecord
 
   enum :status, { draft: "draft", published: "published", expired: "expired", blocked: "blocked", removed: "removed", sold: "sold" }
 
+  SOLD_BADGE_DURATION = 30.days
+
   validates :status, presence: true
+
+  def mark_sold!(at: Time.current, price_cents: vehicle.price_cents)
+    update!(status: "sold", sold_at: at, sold_price_cents: price_cents, expires_at: at + SOLD_BADGE_DURATION)
+  end
 
   def sold_visible?
     sold? && expires_at.present? && expires_at >= Time.current

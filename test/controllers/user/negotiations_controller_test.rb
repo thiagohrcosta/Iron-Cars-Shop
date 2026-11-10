@@ -39,44 +39,29 @@ class User::NegotiationsControllerTest < ActionDispatch::IntegrationTest
     assert @negotiation.reload.unread_for?(@buyer)
   end
 
-  private
+  test "create opens a negotiation at the asking price with the vehicle summary" do
+    other_vehicle = create_vehicle(@seller, price_cents: 4_200_000, mileage: 12_345)
+    other_listing = VehicleListing.create!(vehicle: other_vehicle, seller: @seller, status: :published)
+    sign_in @buyer
 
-  def create_user(email, full_name)
-    User.create!(
-      email: email,
-      password: "Password123!",
-      password_confirmation: "Password123!",
-      full_name: full_name,
-      document_id: SecureRandom.random_number(10**11).to_s.rjust(11, "0"),
-      phone_number: "5551212121",
-      address_street: "Market St",
-      address_number: "100",
-      address_neighborhood: "Central",
-      address_city: "Miami",
-      address_state: "FL",
-      address_zip_code: "33101",
-      address_country: "US"
-    )
+    assert_difference("Negotiation.count", 1) do
+      post user_negotiations_url, params: { negotiation: { vehicle_listing_id: other_listing.id } }
+    end
+
+    negotiation = Negotiation.order(:created_at).last
+    assert_redirected_to user_negotiation_url(negotiation)
+    assert_equal [ @buyer, @seller, 4_200_000 ], [ negotiation.buyer, negotiation.seller, negotiation.price_cents.to_i ]
+    assert_match(/\AVehicle information: .+ Listed price \$42,000\. 12,345 miles/, negotiation.negotiation_messages.sole.content)
   end
 
-  def create_vehicle(seller)
-    brand = Brand.create!(user: seller, name: "Ctrl BMW", slug: "ctrl-bmw", description: "BMW", country: "Germany", founded_in: "1916")
-    car_model = CarModel.create!(user: seller, brand: brand, name: "Ctrl M4", slug: "ctrl-m4", description: "M4", body_type: :coupe)
+  test "create refuses a negotiation on your own vehicle" do
+    sign_in @seller
 
-    Vehicle.create!(
-      user: seller,
-      car_model: car_model,
-      vin: "#{SecureRandom.random_number(10**17).to_s.rjust(17, '0')}",
-      year: 2024,
-      mileage: 4_000,
-      exterior_color: "black",
-      transmission: :automatic,
-      fuel_type: :gasoline,
-      drivetrain: :rwd,
-      condition: :used,
-      title_status: :clean,
-      price_cents: 5_800_000,
-      currency: :usd
-    )
+    assert_no_difference("Negotiation.count") do
+      post user_negotiations_url, params: { negotiation: { vehicle_listing_id: @listing.id } }
+    end
+
+    assert_redirected_to car_url(@vehicle)
+    assert_equal "You cannot negotiate your own vehicle.", flash[:alert]
   end
 end

@@ -42,10 +42,10 @@ Rails.application.routes.draw do
     post "billing/checkout", to: "billing#create_checkout_session", as: :billing_checkout
 
     resources :negotiations, only: [ :index, :show, :create ] do
-      member do
-        post :make_offer
-        patch :accept_offer
-        patch :reject_offer
+      scope module: :negotiations do
+        resource :offer, only: :create
+        resource :acceptance, only: :create
+        resource :rejection, only: :create
       end
 
       resources :messages, only: :create, controller: "negotiation_messages"

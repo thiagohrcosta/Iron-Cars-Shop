@@ -1,5 +1,6 @@
 class Negotiation < ApplicationRecord
-  MAX_OFFER_ATTEMPTS = 3
+  include Offering, Broadcasting
+
   LEAD_STALE_WINDOW = 72.hours
 
   has_secure_token :public_access_token
@@ -77,30 +78,6 @@ class Negotiation < ApplicationRecord
     public_access_token
   end
 
-  def offer_active?
-    pending? && accepted_by_buyer? && !accepted_by_seller?
-  end
-
-  def offer_attempts_count
-    if negotiation_messages.loaded?
-      negotiation_messages.count { |message| offer_message?(message) }
-    else
-      negotiation_messages.where("content LIKE ?", "Offer submitted:%").count
-    end
-  end
-
-  def remaining_offer_attempts
-    [ MAX_OFFER_ATTEMPTS - offer_attempts_count, 0 ].max
-  end
-
-  def can_receive_offer_from?(user)
-    buyer?(user) && !accepted? && !vehicle_listing&.sold_visible? && !offer_active? && remaining_offer_attempts.positive?
-  end
-
-  def offer_limit_reached?
-    remaining_offer_attempts.zero?
-  end
-
   def seller_replied?
     negotiation_messages.where(user_id: seller_id).exists?
   end
@@ -133,9 +110,5 @@ class Negotiation < ApplicationRecord
 
   def last_read_column_for(user)
     buyer?(user) ? :buyer_last_read_at : :seller_last_read_at
-  end
-
-  def offer_message?(message)
-    message.content.to_s.start_with?("Offer submitted:")
   end
 end
