@@ -90,9 +90,11 @@ class User::NegotiationsController < ApplicationController
         accepted_at: Time.current
       )
 
+      sold_at = Time.current
       @negotiation.vehicle_listing.update!(
         status: "sold",
-        expires_at: 30.days.from_now
+        sold_at: sold_at,
+        expires_at: sold_at + 30.days
       )
 
       @negotiation.negotiation_messages.create!(

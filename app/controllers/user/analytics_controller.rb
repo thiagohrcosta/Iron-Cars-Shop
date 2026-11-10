@@ -142,8 +142,9 @@ class User::AnalyticsController < ApplicationController
     }.fetch(key, key)
   end
 
+  # The day the deal closed. expires_at is only how long the listing stays visible as SOLD.
   def listing_reference_date(listing)
-    listing&.expires_at&.to_date || listing&.published_at&.to_date
+    listing&.sold_at&.to_date
   end
 
   def analytics_plans
