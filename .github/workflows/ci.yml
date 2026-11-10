@@ -90,7 +90,13 @@ jobs:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare test test:system
+        # Separate invocations: in Rails 8.1 chaining `test` after other tasks shells out to a
+        # `rails` executable that may not be on PATH, and `test test:system` treats the second
+        # argument as a file path.
+        run: |
+          bin/rails db:test:prepare
+          bin/rails test
+          bin/rails test:system
 
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v4

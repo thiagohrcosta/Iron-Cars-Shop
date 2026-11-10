@@ -54,8 +54,9 @@ class NegotiationMessage < ApplicationRecord
   def claim_notification_slot_for(recipient)
     column = last_notified_column_for(recipient)
 
-    rows_affected = Negotiation.where(id: negotiation_id)
-      .where("#{column} IS NULL OR #{column} < ?", 30.minutes.ago)
+    scope = Negotiation.where(id: negotiation_id)
+    rows_affected = scope.where(column => nil)
+      .or(scope.where(column => ...30.minutes.ago))
       .update_all(column => Time.current)
 
     rows_affected.positive?

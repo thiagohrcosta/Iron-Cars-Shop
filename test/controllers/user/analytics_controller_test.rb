@@ -25,6 +25,7 @@ class User::AnalyticsControllerTest < ActionDispatch::IntegrationTest
       user: @seller,
       name: "BMW",
       slug: "bmw",
+      description: "BMW",
       country: "Germany",
       founded_in: "1916"
     )
@@ -61,7 +62,8 @@ class User::AnalyticsControllerTest < ActionDispatch::IntegrationTest
       status: :sold,
       views_count: 30
     )
-    @listing.update_column(:updated_at, 10.days.ago)
+    # Listings have no updated_at; analytics dates a sale by expires_at, falling back to published_at.
+    @listing.update_column(:published_at, 10.days.ago)
   end
 
   test "returns analytics data json with selected range" do

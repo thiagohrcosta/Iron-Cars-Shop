@@ -106,7 +106,7 @@ class AgentLeadService
   def maybe_create_lead!(payload:, collected:)
     return Lead.find_by(id: @state["lead_id"]) if @state["lead_id"].present?
     return unless required_fields_present?(collected)
-    return unless payload["should_create_lead"] || explicit_closing_signal?
+    return unless payload["should_create_lead"] && explicit_closing_signal?
 
     Lead.create!(
       name: collected["name"],
@@ -156,6 +156,11 @@ class AgentLeadService
       "thank you",
       "thanks",
       "for now",
+      "yes",
+      "yep",
+      "correct",
+      "confirmed",
+      "sim",
       "perfeito",
       "pode seguir",
       "pode prosseguir",
@@ -164,6 +169,6 @@ class AgentLeadService
       "ta ok",
       "tá ok",
       "ok"
-    ].any? { |token| normalized.include?(token) }
+    ].any? { |token| normalized.match?(/(?<![[:alnum:]])#{Regexp.escape(token)}(?![[:alnum:]])/) }
   end
 end

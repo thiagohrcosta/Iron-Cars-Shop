@@ -24,6 +24,11 @@ class Lead < ApplicationRecord
     distributed_at.present?
   end
 
+  def reload(*)
+    @latest_negotiation = nil
+    super
+  end
+
   def latest_negotiation
     @latest_negotiation ||= negotiations.max_by(&:created_at)
   end

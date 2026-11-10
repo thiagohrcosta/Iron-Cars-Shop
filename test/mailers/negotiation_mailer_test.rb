@@ -30,7 +30,9 @@ class NegotiationMailerTest < ActionMailer::TestCase
 
   test "falls back to email when sender has no full name" do
     buyer = create_user("buyer-fallback@example.com", "Buyer Fallback")
-    seller = create_user("seller-fallback@example.com", "")
+    seller = create_user("seller-fallback@example.com", "Seller Fallback")
+    # User validates full_name presence; simulate a legacy record with a blank name.
+    seller.update_column(:full_name, "")
     vehicle = create_vehicle(seller)
     listing = VehicleListing.create!(vehicle: vehicle, seller: seller, status: :published)
     negotiation = Negotiation.create!(
